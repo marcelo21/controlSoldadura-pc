@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>296</width>
+    <height>423</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Configuracion</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../iconos/ic_configuracion.svg</normaloff>../../iconos/ic_configuracion.svg</iconset>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="2" column="3">
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="title">
+         <string>Regulacion</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <widget class="QRadioButton" name="r_btn_106">
+           <property name="text">
+            <string>SI</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="r_btn_107">
+           <property name="text">
+            <string>NO</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="title">
+         <string>Pulsador</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QRadioButton" name="r_btn_102">
+           <property name="text">
+            <string>Con Seguridad</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="r_btn_103">
+           <property name="text">
+            <string>Sin Seguridad</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="3" column="1" colspan="3">
+       <widget class="QGroupBox" name="groupBox_6">
+        <property name="title">
+         <string>Programacion</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>CS -&gt; PC</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="combo_101">
+           <item>
+            <property name="text">
+             <string>Calibracion</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Todo</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>PC -&gt; CS</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="combo_102">
+           <item>
+            <property name="text">
+             <string>Soldadura</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Todo</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="3">
+       <widget class="QGroupBox" name="groupBox_5">
+        <property name="title">
+         <string>Control</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="3" column="1">
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>[ms]</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Fin Ciclo</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="combo_100">
+           <item>
+            <property name="text">
+             <string>COM1</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM3</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM4</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM5</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM6</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM7</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM8</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM9</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM10</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM11</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM12</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM13</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM14</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM15</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM16</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM17</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM18</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM19</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>COM20</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Puerto</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="caja_100">
+           <property name="maximum">
+            <number>9999</number>
+           </property>
+           <property name="singleStep">
+            <number>10</number>
+           </property>
+           <property name="value">
+            <number>250</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="2">
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Incremento</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QRadioButton" name="r_btn_100">
+           <property name="text">
+            <string>Automatico</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="r_btn_101">
+           <property name="text">
+            <string>Manual</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="2">
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="title">
+         <string>Soldadura</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QRadioButton" name="r_btn_104">
+           <property name="text">
+            <string>Por Puntos</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="r_btn_105">
+           <property name="text">
+            <string>Costura</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Preferred</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>10</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="4">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Preferred</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>10</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="4" column="1" colspan="3">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="5" column="1" colspan="3">
+       <widget class="QDialogButtonBox" name="buttonBox">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>Dialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

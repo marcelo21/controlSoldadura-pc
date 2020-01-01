@@ -1,0 +1,5 @@
+iconos
+.vscode
+__pycache__
+
+*.pyc
