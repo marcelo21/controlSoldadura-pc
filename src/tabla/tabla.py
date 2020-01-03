@@ -63,6 +63,29 @@ class Tabla(QDialog):
         self.table_100.setCellWidget(fila, 2, combo_2)
         self.table_100.setCellWidget(fila, 3, texto_1)
 
+    def seteoFila(self, fila, prog, disp, funcion, etiqueta):
+        """
+        """
+
+        Programa = self.table_100.cellWidget(fila, 0)
+        Dispositivo = self.table_100.cellWidget(fila, 1)
+        Funcion = self.table_100.cellWidget(fila, 2)
+        Etiqueta = self.table_100.cellWidget(fila, 3)
+
+        Programa.setValue(prog)
+        Dispositivo.setCurrentText(str(disp))
+
+        if funcion == 10:
+            Funcion.setCurrentText("Individual")
+        elif funcion == 20:
+            Funcion.setCurrentText("Inicio")
+        elif funcion == 30:
+            Funcion.setCurrentText("Fin")
+        else:
+            Funcion.setCurrentText("Continuar")
+
+        Etiqueta.setText(etiqueta)
+
     def datosTabla(self):
         """
         Valor Funcion retorna 10, 20, 30, 40, 50
@@ -118,7 +141,27 @@ class Tabla(QDialog):
         """
         """
 
-        pass
+        vectorProgramas = cs['PROG_LISTA']
+        vectorDispositivo = cs['DISP_LISTA']
+        #vectorFuncion = cs['SOLDADURA']
+        vectorEtiqueta = cs['ETIQUETA']
+
+        filas_max = self.table_100.rowCount()
+        for i in range(0, filas_max):
+            self.table_100.removeRow(1)
+
+        filas_max = len(vectorDispositivo) - 1
+        for i in range(0, filas_max):
+            self.agregarFilas()
+
+        filas_max = len(vectorDispositivo) 
+        for i in range(0, filas_max):
+            disp = vectorDispositivo[i] - 1
+            prog = vectorProgramas[i] - 1
+            
+            self.seteoFila(i, vectorProgramas[i], vectorDispositivo[i], cs['SOLDADURA'][disp][prog][21], vectorEtiqueta[i])
+
+        self.juntoFilas()
 
     def juntoFilas(self):
         """
