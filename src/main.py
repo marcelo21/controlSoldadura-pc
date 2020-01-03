@@ -1,9 +1,13 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QFileDialog
 from PyQt5 import uic, QtCore
 
 import sys
 
 import numpy as np
+
+import datetime
+
+import os
 
 from asistente.asistente import Asistente
 from configuracion.configuracion import Configuracion
@@ -149,6 +153,10 @@ class Main(QMainWindow):
         # MONITOR.        
         self.actionFuerzaa.triggered.connect(self.monitorFuerza)
         self.actionIntensidad.triggered.connect(self.monitorIntensidad)
+
+        # CARGAR y GUARDAR.
+        self.actionGuardar_Como.triggered.connect(self.guardar)
+        self.actionAbrir.triggered.connect(self.cargar)
 
     def PC_CS(self):
         """
@@ -835,6 +843,53 @@ class Main(QMainWindow):
 
     def ventanaTabla(self):
         window_5.show()
+
+    def guardar(self):
+        """
+        """
+
+        self.pidoDatosConfiguracion()
+        self.valorCajas()
+
+        os.chdir(os.path.expanduser("~"))
+
+        fecha = str(datetime.datetime.now().date())
+        nombre_archivo = ("save_" + fecha + ".npy") 
+
+        try:
+            direccion = QFileDialog.getSaveFileName(self, "Guardar", nombre_archivo)
+            direccion = direccion[0]
+            np.save(direccion, cs)
+
+        except:
+            pass
+
+    def cargar(self):
+        """
+        """
+
+        os.chdir(os.path.expanduser("~"))
+
+        try:
+            direccion = QFileDialog.getOpenFileName(self, "Abrir", "", "*.npy")
+            direccion = direccion[0]
+            filename = np.load(direccion, allow_pickle=True)
+            
+            cs['CONFIGURACION'] = filename.item().get("CONFIGURACION")
+            cs['MONITOR'] = filename.item().get("MONITOR")
+            cs['CALIBRACION'] = filename.item().get("CALIBRACION")
+            cs['SERVICIOS'] = filename.item().get("SERVICIOS")
+            cs['SOLDADURA'] = filename.item().get("SOLDADURA")
+            cs['PROG_LISTA'] = filename.item().get("PROG_LISTA")
+            cs['DISP_LISTA'] = filename.item().get("DISP_LISTA")
+            cs['ETIQUETA'] = filename.item().get("ETIQUETA")
+            
+            window_3.cargoConfiguracion(cs)
+            window_5.cargoTabla(cs)            
+            self.seteoCajas()
+
+        except:
+            pass
 
 
 if __name__ == '__main__':
