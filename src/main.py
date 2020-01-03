@@ -151,8 +151,8 @@ class Main(QMainWindow):
         self.btn_409.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_419.value()) )
 
         # MONITOR.        
-        self.actionFuerzaa.triggered.connect(self.monitorFuerza)
-        self.actionIntensidad.triggered.connect(self.monitorIntensidad)
+        self.actionFuerzaa.triggered.connect( lambda: self.monitor("Fuerza") )
+        self.actionIntensidad.triggered.connect( lambda: self.monitor("Intensidad") )
 
         # CARGAR y GUARDAR.
         self.actionGuardar_Como.triggered.connect(self.guardar)
@@ -309,17 +309,11 @@ class Main(QMainWindow):
             #no se hace nada.
             pass     
 
-    def monitorFuerza(self):
+    def monitor(self, modo):
         """
         """
         
-        print("hola 1")
-
-    def monitorIntensidad(self):
-        """
-        """
-        
-        print("hola 2")
+        pass
 
     def pidoDatosAsistente(self):
         """

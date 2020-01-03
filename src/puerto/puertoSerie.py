@@ -1096,6 +1096,18 @@ class PuertoSerie(QDialog):
 
         self.barraProgreso(100)
 
+    def monitorFuerza(self, cs, dispActual):
+        """
+        """
+
+        pass
+
+    def monitorIntensidad(self, cs, dispActual):
+        """
+        """
+
+        pass
+
     def confPuerto(self, puerto, estado):
         """
         estado = "OPEN"
