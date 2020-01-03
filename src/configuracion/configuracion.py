@@ -76,6 +76,48 @@ class Configuracion(QDialog):
 
         return soldadura, incremento, finCiclo, configuracionesVarias
 
+    def cargoConfiguracion(self, cs):
+        """
+        """
+
+        soldadura = int(cs['CONFIGURACION'][0][0][0])
+        incremento = int(cs['CONFIGURACION'][0][0][1])
+        finCiclo = int(cs['CONFIGURACION'][0][0][2])
+        valor = int(cs['CONFIGURACION'][0][0][3])
+
+        valor_0  = (valor >> 0)  & 1 # Pulsador 
+        valor_1  = (valor >> 1)  & 1 # Regulacion
+        valor_2  = (valor >> 2)  & 1 # 
+        valor_3  = (valor >> 3)  & 1 # 
+        valor_4  = (valor >> 4)  & 1 # 
+        valor_5  = (valor >> 5)  & 1 # 
+        valor_6  = (valor >> 6)  & 1 # 
+        valor_7  = (valor >> 7)  & 1 # 
+        valor_8  = (valor >> 8)  & 1 # 
+        valor_9  = (valor >> 9)  & 1 # 
+        valor_10 = (valor >> 10) & 1 # 
+        valor_11 = (valor >> 11) & 1 # 
+        valor_12 = (valor >> 12) & 1 # 
+        valor_13 = (valor >> 13) & 1 # 
+        valor_14 = (valor >> 14) & 1 # 
+        valor_15 = (valor >> 15) & 1 #
+        
+        self.caja_100.setValue(finCiclo)
+
+        if incremento == 1:
+            self.r_btn_100.setChecked(True)
+            self.r_btn_101.setChecked(False)
+        else:
+            self.r_btn_100.setChecked(False)
+            self.r_btn_101.setChecked(True)
+
+        if soldadura == 10:
+            self.r_btn_104.setChecked(True)
+            self.r_btn_105.setChecked(False)
+        else:
+            self.r_btn_104.setChecked(False)
+            self.r_btn_105.setChecked(True)
+
 
 if __name__ == '__main__':
     

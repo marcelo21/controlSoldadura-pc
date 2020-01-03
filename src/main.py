@@ -28,10 +28,10 @@ class Main(QMainWindow):
         super().__init__()
         uic.loadUi('main/guiMain.ui', self)
 
-        #SETEO MATRIZ AL INICIO.
+        # SETEO MATRIZ AL INICIO.
         self.seteoDicc()
 
-        #OCULTAR.
+        # OCULTAR.
         self.ocultar()
 
         self.caja_103.valueChanged.connect(self.ocultar)
@@ -40,16 +40,17 @@ class Main(QMainWindow):
         self.caja_113.valueChanged.connect(self.ocultar)
         self.caja_115.valueChanged.connect(self.ocultar)       
 
-        #BLOQUEAR.
+        # BLOQUEAR.
         self.bloquear()
         self.caja_1.valueChanged.connect(self.bloquear)
         self.caja_2.valueChanged.connect(self.bloquear)
+        self.caja_209.valueChanged.connect(self.bloquear)
 
-        #ACTUALIZO CAJAS.
+        # ACTUALIZO CAJAS.
         self.caja_1.valueChanged.connect(self.seteoCajas)
         self.caja_2.valueChanged.connect(self.seteoCajas)
 
-        #ACTUALIZO DICCIONARIO.
+        # ACTUALIZO DICCIONARIO.
         self.caja_100.valueChanged.connect(self.valorCajas)
         self.caja_101.valueChanged.connect(self.valorCajas)
         self.caja_102.valueChanged.connect(self.valorCajas)
@@ -122,17 +123,17 @@ class Main(QMainWindow):
         self.caja_423.valueChanged.connect(self.valorCajas)
         self.caja_424.valueChanged.connect(self.valorCajas)
 
-        #MENU.
+        # MENU.
         self.actionAsistente.triggered.connect(self.ventanaAsistente)
         self.actionConfiguracion.triggered.connect(self.ventanaConfiguracion)
         self.actionCopiar.triggered.connect(self.ventanaCopiar)
         self.actionTabla.triggered.connect(self.ventanaTabla)
 
-        #CS-PC.
+        # CS-PC.
         self.actionCS_PC.triggered.connect(self.CS_PC)
         self.actionPC_CS.triggered.connect(self.PC_CS)
 
-        #MEDIR.
+        # MEDIR.
         self.btn_400.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_405.value()) )
         self.btn_401.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_406.value()) )
         self.btn_402.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_407.value()) )
@@ -144,6 +145,10 @@ class Main(QMainWindow):
         self.btn_407.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_417.value()) )
         self.btn_408.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_418.value()) )
         self.btn_409.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_419.value()) )
+
+        # MONITOR.        
+        self.actionFuerzaa.triggered.connect(self.monitorFuerza)
+        self.actionIntensidad.triggered.connect(self.monitorIntensidad)
 
     def PC_CS(self):
         """
@@ -243,6 +248,8 @@ class Main(QMainWindow):
             puerto.confPuerto(selecPort, "CLOSE")            
             puerto.hide()       
 
+            window_3.cargoConfiguracion(cs)
+
         else:
             #no se hace nada.
             pass
@@ -292,7 +299,19 @@ class Main(QMainWindow):
 
         else:
             #no se hace nada.
-            pass        
+            pass     
+
+    def monitorFuerza(self):
+        """
+        """
+        
+        print("hola 1")
+
+    def monitorIntensidad(self):
+        """
+        """
+        
+        print("hola 2")
 
     def pidoDatosAsistente(self):
         """
@@ -714,10 +733,12 @@ class Main(QMainWindow):
         programa = self.caja_2.value()
         estado = False
 
-        #if( (dispositivo in cs['DISP_LISTA']) and (programa in cs['PROG_LISTA']) ):
-        #    estado = True
-        #else:
-        #    estado = False
+        if self.caja_209.value() == 0:
+            self.caja_206.setValue(0)
+            self.caja_206.setEnabled(False)
+        else:
+            self.caja_206.setValue(1)
+            self.caja_206.setEnabled(True)
 
         largo = len(cs["DISP_LISTA"])
         for i in range(0, largo):  

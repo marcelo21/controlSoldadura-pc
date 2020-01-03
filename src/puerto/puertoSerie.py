@@ -662,7 +662,7 @@ class PuertoSerie(QDialog):
         cs['CONFIGURACION'][0][0][1] = dato             # Aumento de Programa.
         
         dato = self.recibir(0x0002 + D_INI_CONF)
-        cs['CONFIGURACION'][0][0][2] = dato * 100       # Fin de ciclo.
+        cs['CONFIGURACION'][0][0][2] = dato * 10        # Fin de ciclo.
 
         dato_MSB = self.recibir(0x0003 + D_INI_CONF)
         dato_LSB = self.recibir(0x0004 + D_INI_CONF)

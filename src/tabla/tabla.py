@@ -114,6 +114,12 @@ class Tabla(QDialog):
 
         return vectorProgramas, vectorDispositivo, vectorFuncion, vectorEtiqueta
 
+    def cargoTabla(self, cs):
+        """
+        """
+
+        pass
+
     def juntoFilas(self):
         """
         """
