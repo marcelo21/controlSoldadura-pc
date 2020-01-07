@@ -778,7 +778,8 @@ class Main(QMainWindow):
             self.caja_206.setValue(0)
             self.caja_206.setEnabled(False)
         else:
-            self.caja_206.setValue(1)
+            aux = self.caja_206.value()
+            self.caja_206.setValue(aux)
             self.caja_206.setEnabled(True)
 
         largo = len(cs["DISP_LISTA"])

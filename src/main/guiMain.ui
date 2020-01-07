@@ -1354,6 +1354,9 @@
                      <height>16777215</height>
                     </size>
                    </property>
+                   <property name="maximum">
+                    <number>65000</number>
+                   </property>
                   </widget>
                  </item>
                  <item row="1" column="1">
@@ -1463,6 +1466,9 @@
                      <width>100</width>
                      <height>16777215</height>
                     </size>
+                   </property>
+                   <property name="maximum">
+                    <number>65000</number>
                    </property>
                   </widget>
                  </item>
@@ -4094,12 +4100,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>112</x>
-     <y>132</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
     <hint type="destinationlabel">
-     <x>131</x>
-     <y>239</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
    </hints>
   </connection>
@@ -4110,12 +4116,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>274</x>
-     <y>142</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
     <hint type="destinationlabel">
-     <x>279</x>
-     <y>246</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
    </hints>
   </connection>
@@ -4126,12 +4132,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>710</x>
-     <y>135</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
     <hint type="destinationlabel">
-     <x>696</x>
-     <y>238</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
    </hints>
   </connection>
@@ -4142,12 +4148,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>797</x>
-     <y>132</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
     <hint type="destinationlabel">
-     <x>810</x>
-     <y>242</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
    </hints>
   </connection>
@@ -4158,12 +4164,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>168</x>
-     <y>240</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
     <hint type="destinationlabel">
-     <x>164</x>
-     <y>138</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
    </hints>
   </connection>
@@ -4174,12 +4180,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>258</x>
-     <y>241</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
     <hint type="destinationlabel">
-     <x>251</x>
-     <y>137</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
    </hints>
   </connection>
@@ -4190,12 +4196,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>731</x>
-     <y>246</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
     <hint type="destinationlabel">
-     <x>723</x>
-     <y>134</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
    </hints>
   </connection>
@@ -4206,12 +4212,28 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>860</x>
-     <y>244</y>
+     <x>129</x>
+     <y>100</y>
     </hint>
     <hint type="destinationlabel">
-     <x>858</x>
-     <y>138</y>
+     <x>129</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>caja_209</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>caja_206</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>529</x>
+     <y>242</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>162</x>
+     <y>238</y>
     </hint>
    </hints>
   </connection>
