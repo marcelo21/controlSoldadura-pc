@@ -257,6 +257,7 @@ class Main(QMainWindow):
             puerto.hide()       
 
             window_3.cargoConfiguracion(cs)
+            window_5.cargoTabla(cs)         
 
         else:
             #no se hace nada.

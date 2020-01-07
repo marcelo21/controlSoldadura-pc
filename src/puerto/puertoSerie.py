@@ -1032,6 +1032,9 @@ class PuertoSerie(QDialog):
         dato = self.recibir(0x001A + D_INI_SOLD + D_POSC_MEM)                  
         cs['SOLDADURA'][dispActual][progActual][20] = dato          # Tolerancia 2.     
 
+        dato = self.recibir(0x0027 + D_INI_SOLD + D_POSC_MEM)
+        cs['SOLDADURA'][dispActual][progActual][21] = dato          # Comportamiento.                          
+
         return cs['SOLDADURA']
 
     def medirFuerza(self, cs, dispActual, dato):
