@@ -313,7 +313,46 @@ class Main(QMainWindow):
         """
         """
         
-        pass
+        pregunta = QMessageBox.question(self, 
+                                        "Atencion", 
+                                        "¿Desea Continuar?", 
+                                        QMessageBox.Ok | QMessageBox.Cancel
+                                       )
+
+        self.valorCajas()
+
+        if pregunta == QMessageBox.Ok:
+            #mando el diccionario. 
+
+            dispActual = self.caja_1.value() - 1
+            #progActual = self.caja_2.value() - 1 
+
+            puerto.show()
+            window_3.setearPuerto(puerto.seleccionoPuerto())
+            selecPort = window_3.seleccionarPuerto()
+            puerto.confPuerto(selecPort, "OPEN")
+
+            puerto.enviarDatosMonitor(cs, dispActual)
+
+            if modo == "Fuerza":
+                puerto.monitorFuerza()
+
+            elif modo == "Intensidad":
+                puerto.monitorIntensidad()
+
+            else:
+                pass
+
+            puerto.confPuerto(selecPort, "CLOSE")   
+            puerto.hide()
+
+        elif pregunta == QMessageBox.Reset:
+            #mando uno vacio.
+            pass
+
+        else:
+            #no se hace nada.
+            pass
 
     def pidoDatosAsistente(self):
         """

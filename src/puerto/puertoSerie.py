@@ -1096,17 +1096,33 @@ class PuertoSerie(QDialog):
 
         self.barraProgreso(100)
 
-    def monitorFuerza(self, cs, dispActual):
+    def monitorFuerza(self):
+        """
+        """
+        
+        self.barraProgreso(100 / 5 * 3)
+
+        # Fuerza.
+
+        print("-Fuerza-")
+
+        dato = "G"                                              # CS vamos a monitor fuerza. 
+        ser.write( bytes(dato.encode()) )                       # Envio bandera calibracion.
+
+        self.barraProgreso(100)
+
+    def monitorIntensidad(self):
         """
         """
 
-        pass
+        # Intensidad.
 
-    def monitorIntensidad(self, cs, dispActual):
-        """
-        """
+        print("-Intensidad-")
 
-        pass
+        dato = "H"                                              # CS vamos a monito intensidad. 
+        ser.write( bytes(dato.encode()) )                       # Envio bandera calibracion.
+
+        self.barraProgreso(100)
 
     def confPuerto(self, puerto, estado):
         """
