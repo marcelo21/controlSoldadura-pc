@@ -84,7 +84,7 @@ class Tabla(QDialog):
         else:
             Funcion.setCurrentText("Continuar")
 
-        Etiqueta.setText(etiqueta)
+        Etiqueta.setText(str(etiqueta))
 
     def datosTabla(self):
         """
