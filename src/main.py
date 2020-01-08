@@ -23,7 +23,7 @@ cs = {
     'SOLDADURA'    : np.zeros((5, 255, 22)),
     'PROG_LISTA'   : [1],
     'DISP_LISTA'   : [1],
-    'ETIQUETA'     : [255]    
+    'ETIQUETA'     : [""]    
 }
 
 class Main(QMainWindow):

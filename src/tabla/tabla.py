@@ -83,8 +83,8 @@ class Tabla(QDialog):
             Funcion.setCurrentText("Fin")
         else:
             Funcion.setCurrentText("Continuar")
-
-        Etiqueta.setText(str(etiqueta))
+            
+        Etiqueta.setText(etiqueta)
 
     def datosTabla(self):
         """
