@@ -9,8 +9,6 @@ class Configuracion(QDialog):
         super().__init__()
         uic.loadUi('configuracion/guiConfiguracion.ui', self)
 
-        #self.buttonBox.accepted.connect(self.datosConfiguracion)
-
     def setearPuerto(self, puertos):
         """
         """
@@ -119,11 +117,20 @@ class Configuracion(QDialog):
             self.r_btn_105.setChecked(True)
 
 
+class ListaErrores(QDialog):
+
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('configuracion/guiTablaErrores.ui', self)
+
+
 if __name__ == '__main__':
     
     app = QApplication(sys.argv)
 
-    window = Configuracion()
-    window.show()
+    window_1 = Configuracion()
+    window_2 = ListaErrores()
+
+    window_1.show()
 
     sys.exit(app.exec_())

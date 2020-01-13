@@ -14,6 +14,7 @@ from configuracion.configuracion import Configuracion
 from copiar.copiar import Copiar
 from tabla.tabla import Tabla
 from puerto.puertoSerie import PuertoSerie
+from configuracion.configuracion import ListaErrores
 
 cs = {
     'CONFIGURACION': np.zeros((1, 1, 16)),
@@ -936,6 +937,7 @@ if __name__ == '__main__':
     window_3 = Configuracion()
     window_4 = Copiar()
     window_5 = Tabla()
+    window_6 = ListaErrores()
 
     puerto = PuertoSerie()
 
@@ -944,8 +946,9 @@ if __name__ == '__main__':
     #window_3.show()
     #window_4.show()
     #window_5.show()
-
+    
     window_2.buttonBox.accepted.connect(window_1.pidoDatosAsistente)
+    window_3.btn_100.clicked.connect(lambda: window_6.show() )
     window_4.buttonBox.accepted.connect(window_1.pidoDatosCopiar)
     window_5.buttonBox.accepted.connect(window_1.pidoDatosTabla)
 
