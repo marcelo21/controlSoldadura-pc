@@ -1025,7 +1025,7 @@
         </property>
        </spacer>
       </item>
-      <item row="0" column="0" colspan="6">
+      <item row="0" column="1" colspan="5">
        <widget class="Line" name="line_3">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
