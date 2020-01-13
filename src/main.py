@@ -159,6 +159,9 @@ class Main(QMainWindow):
         self.actionGuardar_Como.triggered.connect(self.guardar)
         self.actionAbrir.triggered.connect(self.cargar)
 
+        # LISTA DE ERRORES.
+        self.actionErrores.triggered.connect(lambda: window_6.show())
+
     def PC_CS(self):
         """
         """        
@@ -948,7 +951,6 @@ if __name__ == '__main__':
     #window_5.show()
     
     window_2.buttonBox.accepted.connect(window_1.pidoDatosAsistente)
-    window_3.btn_100.clicked.connect(lambda: window_6.show() )
     window_4.buttonBox.accepted.connect(window_1.pidoDatosCopiar)
     window_5.buttonBox.accepted.connect(window_1.pidoDatosTabla)
 
