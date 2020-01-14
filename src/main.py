@@ -184,7 +184,6 @@ class Main(QMainWindow):
             progActual = self.caja_2.value() - 1    
 
             puerto.show()
-            #window_3.setearPuerto(puerto.seleccionoPuerto()) # bug en potencia.
             selecPort = window_3.seleccionarPuerto()
             puerto.confPuerto(selecPort, "OPEN")
 
@@ -215,7 +214,6 @@ class Main(QMainWindow):
 
             puerto.confPuerto(selecPort, "CLOSE")            
             puerto.hide()
-            pass
 
         else:
             #no se hace nada.
@@ -242,7 +240,6 @@ class Main(QMainWindow):
             progActual = self.caja_2.value() - 1
 
             puerto.show()
-            #window_3.setearPuerto(puerto.seleccionoPuerto()) # bug en potencia.
             selecPort = window_3.seleccionarPuerto()
             puerto.confPuerto(selecPort, "OPEN")   
 
@@ -288,7 +285,6 @@ class Main(QMainWindow):
             #progActual = self.caja_2.value() - 1 
 
             puerto.show()
-            #window_3.setearPuerto(puerto.seleccionoPuerto()) # bug en potencia.
             selecPort = window_3.seleccionarPuerto()
             puerto.confPuerto(selecPort, "OPEN")
 
@@ -333,7 +329,6 @@ class Main(QMainWindow):
             #progActual = self.caja_2.value() - 1 
 
             puerto.show()
-            #window_3.setearPuerto(puerto.seleccionoPuerto()) # bug en potencia.
             selecPort = window_3.seleccionarPuerto()
             puerto.confPuerto(selecPort, "OPEN")
 
@@ -350,10 +345,6 @@ class Main(QMainWindow):
 
             puerto.confPuerto(selecPort, "CLOSE")   
             puerto.hide()
-
-        elif pregunta == QMessageBox.Reset:
-            #mando uno vacio.
-            pass
 
         else:
             #no se hace nada.

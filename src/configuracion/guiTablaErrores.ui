@@ -133,7 +133,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Punto Pieza</string>
+         <string>Puntos Pieza</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -283,7 +283,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Bloqueo</string>
+         <string>Enable</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

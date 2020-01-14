@@ -1167,7 +1167,7 @@ class PuertoSerie(QDialog):
 
         QtCore.QCoreApplication.processEvents()
 
-        TIEMPO_DATO = 0.030                         # Tiempo que le toma al CS 
+        TIEMPO_DATO = 0.035                         # Tiempo que le toma al CS 
                                                     # para guardar la informacion.  
 
         direccion_MSB = str(direccion >> 8)
@@ -1198,7 +1198,7 @@ class PuertoSerie(QDialog):
 
         QtCore.QCoreApplication.processEvents()
 
-        TIEMPO_DATO = 0.030                         # Tiempo que le toma al CS 
+        TIEMPO_DATO = 0.035                         # Tiempo que le toma al CS 
                                                     # para guardar la informacion.  
 
         direccion_MSB = str(direccion >> 8)
