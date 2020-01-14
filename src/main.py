@@ -183,37 +183,49 @@ class Main(QMainWindow):
             dispActual = self.caja_1.value() - 1
             progActual = self.caja_2.value() - 1    
 
-            puerto.show()
-            selecPort = window_3.seleccionarPuerto()
-            puerto.confPuerto(selecPort, "OPEN")
+            try:
+                puerto.show()
+                selecPort = window_3.seleccionarPuerto()
+                puerto.confPuerto(selecPort, "OPEN")
 
-            puerto.enviarDatosConfiguracion(cs)
-            puerto.enviarDatosMonitor(cs, dispActual)
+                puerto.enviarDatosConfiguracion(cs)
+                puerto.enviarDatosMonitor(cs, dispActual)
 
-            for i in range(0, len(cs['DISP_LISTA'])):
-                dispActual = cs['DISP_LISTA'][i] - 1
-                progActual = cs['PROG_LISTA'][i] - 1               
-            
-                puerto.enviarDatosCalibracion(cs, dispActual)
-                puerto.enviarDatosServicios(cs, dispActual)
-                puerto.enviarDatosSoldadura(cs, dispActual, progActual)
+                for i in range(0, len(cs['DISP_LISTA'])):
+                    dispActual = cs['DISP_LISTA'][i] - 1
+                    progActual = cs['PROG_LISTA'][i] - 1               
+                
+                    puerto.enviarDatosCalibracion(cs, dispActual)
+                    puerto.enviarDatosServicios(cs, dispActual)
+                    puerto.enviarDatosSoldadura(cs, dispActual, progActual)
 
-            puerto.confPuerto(selecPort, "CLOSE")            
-            puerto.hide()
+                puerto.confPuerto(selecPort, "CLOSE")            
+                puerto.hide()
+
+            except:
+                puerto.hide()
+                mensaje = "El puerto [" + selecPort + "] no se reconoce."
+                QMessageBox.warning(self, "Alerta", mensaje)
 
         elif pregunta == QMessageBox.Reset:
             #mando uno vacio.
             
-            puerto.show()
-            window_3.setearPuerto(puerto.seleccionoPuerto())
-            selecPort = window_3.seleccionarPuerto()
-            puerto.confPuerto(selecPort, "OPEN")
+            try:
+                puerto.show()
+                window_3.setearPuerto(puerto.seleccionoPuerto())
+                selecPort = window_3.seleccionarPuerto()
+                puerto.confPuerto(selecPort, "OPEN")
 
-            puerto.bloquearProgramas()
-            #puerto.borrarEeprom()
+                puerto.bloquearProgramas()
+                #puerto.borrarEeprom()
 
-            puerto.confPuerto(selecPort, "CLOSE")            
-            puerto.hide()
+                puerto.confPuerto(selecPort, "CLOSE")            
+                puerto.hide()
+
+            except:
+                puerto.hide()
+                mensaje = "El puerto [" + selecPort + "] no se reconoce."
+                QMessageBox.warning(self, "Alerta", mensaje)
 
         else:
             #no se hace nada.
@@ -239,26 +251,32 @@ class Main(QMainWindow):
             dispActual = self.caja_1.value() - 1
             progActual = self.caja_2.value() - 1
 
-            puerto.show()
-            selecPort = window_3.seleccionarPuerto()
-            puerto.confPuerto(selecPort, "OPEN")   
+            try:
+                puerto.show()
+                selecPort = window_3.seleccionarPuerto()
+                puerto.confPuerto(selecPort, "OPEN")   
 
-            cs['CONFIGURACION'] = puerto.recibirDatosConfiguracion(cs)
-            cs['MONITOR'] = puerto.recibirDatosMonitor(cs, dispActual)
-            
-            for i in range(0, len(cs['DISP_LISTA'])):
-                dispActual = cs['DISP_LISTA'][i] - 1
-                progActual = cs['PROG_LISTA'][i] - 1   
+                cs['CONFIGURACION'] = puerto.recibirDatosConfiguracion(cs)
+                cs['MONITOR'] = puerto.recibirDatosMonitor(cs, dispActual)
+                
+                for i in range(0, len(cs['DISP_LISTA'])):
+                    dispActual = cs['DISP_LISTA'][i] - 1
+                    progActual = cs['PROG_LISTA'][i] - 1   
 
-                cs['CALIBRACION'] = puerto.recibirDatosCalibracion(cs, dispActual)
-                cs['SERVICIOS'] = puerto.recibirDatosServicios(cs, dispActual)
-                cs['SOLDADURA'] = puerto.recibirDatosSoldadura(cs, dispActual, progActual)
+                    cs['CALIBRACION'] = puerto.recibirDatosCalibracion(cs, dispActual)
+                    cs['SERVICIOS'] = puerto.recibirDatosServicios(cs, dispActual)
+                    cs['SOLDADURA'] = puerto.recibirDatosSoldadura(cs, dispActual, progActual)
 
-            puerto.confPuerto(selecPort, "CLOSE")            
-            puerto.hide()       
+                puerto.confPuerto(selecPort, "CLOSE")            
+                puerto.hide()       
 
-            window_3.cargoConfiguracion(cs)
-            window_5.cargoTabla(cs)         
+                window_3.cargoConfiguracion(cs)
+                window_5.cargoTabla(cs)         
+
+            except:
+                puerto.hide()
+                mensaje = "El puerto [" + selecPort + "] no se reconoce."
+                QMessageBox.warning(self, "Alerta", mensaje)
 
         else:
             #no se hace nada.
@@ -284,23 +302,29 @@ class Main(QMainWindow):
             dispActual = self.caja_1.value() - 1
             #progActual = self.caja_2.value() - 1 
 
-            puerto.show()
-            selecPort = window_3.seleccionarPuerto()
-            puerto.confPuerto(selecPort, "OPEN")
+            try:
+                puerto.show()
+                selecPort = window_3.seleccionarPuerto()
+                puerto.confPuerto(selecPort, "OPEN")
 
-            puerto.enviarDatosCalibracion(cs, dispActual)
+                puerto.enviarDatosCalibracion(cs, dispActual)
 
-            if modo == "Fuerza":
-                puerto.medirFuerza(cs, dispActual, dato)
+                if modo == "Fuerza":
+                    puerto.medirFuerza(cs, dispActual, dato)
 
-            elif modo == "Intensidad":
-                puerto.medirIntensidad(cs, dispActual, dato)
+                elif modo == "Intensidad":
+                    puerto.medirIntensidad(cs, dispActual, dato)
 
-            else:
-                pass
+                else:
+                    pass
 
-            puerto.confPuerto(selecPort, "CLOSE")   
-            puerto.hide()
+                puerto.confPuerto(selecPort, "CLOSE")   
+                puerto.hide()
+            
+            except:
+                puerto.hide()
+                mensaje = "El puerto [" + selecPort + "] no se reconoce."
+                QMessageBox.warning(self, "Alerta", mensaje)
 
         elif pregunta == QMessageBox.Reset:
             #mando uno vacio.
@@ -328,23 +352,29 @@ class Main(QMainWindow):
             dispActual = self.caja_1.value() - 1
             #progActual = self.caja_2.value() - 1 
 
-            puerto.show()
-            selecPort = window_3.seleccionarPuerto()
-            puerto.confPuerto(selecPort, "OPEN")
+            try:
+                puerto.show()
+                selecPort = window_3.seleccionarPuerto()
+                puerto.confPuerto(selecPort, "OPEN")
 
-            puerto.enviarDatosMonitor(cs, dispActual)
+                puerto.enviarDatosMonitor(cs, dispActual)
 
-            if modo == "Fuerza":
-                puerto.monitorFuerza()
+                if modo == "Fuerza":
+                    puerto.monitorFuerza()
 
-            elif modo == "Intensidad":
-                puerto.monitorIntensidad()
+                elif modo == "Intensidad":
+                    puerto.monitorIntensidad()
 
-            else:
-                pass
+                else:
+                    pass
 
-            puerto.confPuerto(selecPort, "CLOSE")   
-            puerto.hide()
+                puerto.confPuerto(selecPort, "CLOSE")   
+                puerto.hide()
+            
+            except:
+                puerto.hide()
+                mensaje = "El puerto [" + selecPort + "] no se reconoce."
+                QMessageBox.warning(self, "Alerta", mensaje)
 
         else:
             #no se hace nada.
