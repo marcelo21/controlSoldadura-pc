@@ -31,7 +31,7 @@ class PuertoSerie(QDialog):
         y = np.array([0.262,0.517,0.745,0.958,1.184,1.382,1.572,1.754,1.955,2.13,2.305,2.483,2.673,2.841,3.009,3.17,3.351,3.507,3.662,3.82,3.985,4.13,4.27,4.41,4.58,4.71,4.85,4.99,5.12,5.27,5.41,5.53,5.67,5.81,5.93,6.06,6.19,6.32,6.44,6.56,6.67,6.8,6.91,7.02,7.14,7.26,7.36,7.48,7.58,7.69,7.8,7.9,8,8.09,8.2,8.29,8.39,8.48,8.57,8.68,8.77,8.86,8.96,9.06,9.14,9.23,9.32,9.41,9.49,9.57,9.66,9.74,9.82,9.9,9.98,10.06,10.13,10.19,10.29,10.37,10.45,10.52,10.59,10.67,10.75,10.82,10.88,10.95,11.02,11.09,11.15,11.23,11.29,11.36,11.41,11.45,11.46,11.47,11.47])
 
         if(tension > 0):
-            p = P.Polynomial.fit(y, x, 4)
+            p = P.Polynomial.fit(y, x, 3)
             valor_1 = p(tension)
 
         else:
@@ -41,14 +41,14 @@ class PuertoSerie(QDialog):
 
     def conversorTension(self, fuerza, calibracion, dispActual):
         """
-        Fuerza -> Tension
+        Fuerza -> Tension -> Duty
         """
 
         x = calibracion[dispActual, 0, 5:9 + 1]
         y = calibracion[dispActual, 0, 10:14 + 1]
 
         if(fuerza > 0):
-            p = P.Polynomial.fit(y, x, 4)
+            p = P.Polynomial.fit(y, x, 3)
             valor_1 = p(fuerza)
             valor_2 = self.conversorDuty(valor_1)
 
@@ -75,9 +75,10 @@ class PuertoSerie(QDialog):
         y = calibracion[dispActual, 0, 20:24 + 1]        
 
         if(intensidad > 0):
-            p = P.Polynomial.fit(y, x, 4)
+            p = P.Polynomial.fit(y, x, 3)
             valor_1 = p(intensidad)
             valor_2 = valor_1 * (7300 / 100)
+            valor_2 = valor_2 * (1 + 0.055)
 
         else:
             valor_1 = 0
