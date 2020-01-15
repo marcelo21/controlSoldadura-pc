@@ -44,7 +44,7 @@ class PuertoSerie(QDialog):
 
     def conversorTension(self, fuerza, calibracion, dispActual):
         """
-        Fuerza -> Tension
+        Fuerza -> Tension -> Duty
         """
 
         x = calibracion[dispActual, 0, 5:9 + 1]
