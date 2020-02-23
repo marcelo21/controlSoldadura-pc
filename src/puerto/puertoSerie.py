@@ -78,7 +78,6 @@ class PuertoSerie(QDialog):
             valor_1 = np.interp(intensidad, y, x)
 
             valor_2 = valor_1 * (7300 / 100)
-            valor_2 = valor_2 * (1 + 0.055)
 
         else:
             valor_1 = 0
