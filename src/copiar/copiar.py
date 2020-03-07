@@ -110,6 +110,25 @@ class Copiar(QDialog):
             x[DISP_FIN, DESTINO, :] = x[DISP_INI, ORIGEN, :]
 
         return x
+    
+    def copiarCalibServ(self, x, y):
+        """
+        """
+
+        DISP_INI = int(self.combo_100.currentText()) - 1
+        DISP_FIN = int(self.combo_101.currentText()) - 1
+
+        # Calibracion.
+        if(self.checkBox_1.isChecked()):
+            
+            x[DISP_FIN, :, :] = x[DISP_INI, :, :]
+
+        # Servicios.
+        if(self.checkBox_2.isChecked()):
+            
+            y[DISP_FIN, :, :] = y[DISP_INI, :, :]
+
+        return x, y
 
 
 if __name__ == '__main__':

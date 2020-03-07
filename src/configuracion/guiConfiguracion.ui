@@ -90,15 +90,15 @@
       </item>
       <item row="3" column="1" colspan="3">
        <widget class="QGroupBox" name="groupBox_6">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
         <property name="title">
          <string>Programacion</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0">
           <widget class="QLabel" name="label_4">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
            <property name="text">
             <string>CS -&gt; PC</string>
            </property>
@@ -109,6 +109,9 @@
          </item>
          <item row="0" column="1">
           <widget class="QComboBox" name="combo_101">
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
            <item>
             <property name="text">
              <string>Calibracion</string>
@@ -136,6 +139,11 @@
            <item>
             <property name="text">
              <string>Soldadura</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Servicios</string>
             </property>
            </item>
            <item>

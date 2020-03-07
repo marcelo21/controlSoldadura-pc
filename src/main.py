@@ -193,11 +193,23 @@ class Main(QMainWindow):
 
                 for i in range(0, len(cs['DISP_LISTA'])):
                     dispActual = cs['DISP_LISTA'][i] - 1
-                    progActual = cs['PROG_LISTA'][i] - 1               
-                
-                    puerto.enviarDatosCalibracion(cs, dispActual)
-                    puerto.enviarDatosServicios(cs, dispActual)
-                    puerto.enviarDatosSoldadura(cs, dispActual, progActual)
+                    progActual = cs['PROG_LISTA'][i] - 1     
+
+                    if(window_3.combo_102.currentIndex() == 0):
+                        puerto.enviarDatosServicios(cs, dispActual)  
+                        puerto.enviarDatosSoldadura(cs, dispActual, progActual)
+
+                    elif(window_3.combo_102.currentIndex() == 1):
+                        puerto.enviarDatosServicios(cs, dispActual)  
+
+                    else:
+                        puerto.enviarDatosCalibracion(cs, dispActual)
+                        puerto.enviarDatosServicios(cs, dispActual)                   
+                        puerto.enviarDatosSoldadura(cs, dispActual, progActual)
+
+                    # puerto.enviarDatosCalibracion(cs, dispActual)
+                    # puerto.enviarDatosServicios(cs, dispActual)                   
+                    # puerto.enviarDatosSoldadura(cs, dispActual, progActual)
 
                 puerto.confPuerto(selecPort, "CLOSE")            
                 puerto.hide()
@@ -263,9 +275,20 @@ class Main(QMainWindow):
                     dispActual = cs['DISP_LISTA'][i] - 1
                     progActual = cs['PROG_LISTA'][i] - 1   
 
-                    cs['CALIBRACION'] = puerto.recibirDatosCalibracion(cs, dispActual)
-                    cs['SERVICIOS'] = puerto.recibirDatosServicios(cs, dispActual)
-                    cs['SOLDADURA'] = puerto.recibirDatosSoldadura(cs, dispActual, progActual)
+                    if(window_3.combo_101.currentIndex() == 0):
+                        
+                        cs['CALIBRACION'] = puerto.recibirDatosCalibracion(cs, dispActual)
+                        cs['SERVICIOS'] = puerto.recibirDatosServicios(cs, dispActual)                        
+                    
+                    else:
+
+                        cs['CALIBRACION'] = puerto.recibirDatosCalibracion(cs, dispActual)
+                        cs['SERVICIOS'] = puerto.recibirDatosServicios(cs, dispActual)
+                        cs['SOLDADURA'] = puerto.recibirDatosSoldadura(cs, dispActual, progActual)
+
+                    # cs['CALIBRACION'] = puerto.recibirDatosCalibracion(cs, dispActual)
+                    # cs['SERVICIOS'] = puerto.recibirDatosServicios(cs, dispActual)
+                    # cs['SOLDADURA'] = puerto.recibirDatosSoldadura(cs, dispActual, progActual)
 
                 puerto.confPuerto(selecPort, "CLOSE")            
                 puerto.hide()       
@@ -422,6 +445,7 @@ class Main(QMainWindow):
         """
         
         cs['SOLDADURA'] = window_4.identifico(cs['SOLDADURA'])
+        cs['CALIBRACION'], cs['SERVICIOS'] = window_4.copiarCalibServ(cs['CALIBRACION'], cs['SERVICIOS'])
 
     def pidoDatosTabla(self):
         """
