@@ -128,6 +128,8 @@ class Main(QMainWindow):
         self.caja_423.valueChanged.connect(self.valorCajas)
         self.caja_424.valueChanged.connect(self.valorCajas)
 
+        # ACTUALIZO EXTREMOS CAJAS.
+
         # MENU.
         self.actionAsistente.triggered.connect(self.ventanaAsistente)
         self.actionConfiguracion.triggered.connect(self.ventanaConfiguracion)
