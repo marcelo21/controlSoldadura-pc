@@ -129,6 +129,33 @@ class Main(QMainWindow):
         self.caja_424.valueChanged.connect(self.valorCajas)
 
         # ACTUALIZO EXTREMOS CAJAS.
+        self.caja_104.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_107.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_111.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_114.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_116.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_118.valueChanged.connect(self.seteoExtremoCajas)
+
+        self.caja_202.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_203.valueChanged.connect(self.seteoExtremoCajas)
+
+        self.caja_305.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_309.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_311.valueChanged.connect(self.seteoExtremoCajas)
+
+        self.caja_402.valueChanged.connect(self.seteoExtremoCajas)
+
+        self.caja_410.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_411.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_412.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_413.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_414.valueChanged.connect(self.seteoExtremoCajas)
+
+        self.caja_420.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_421.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_422.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_423.valueChanged.connect(self.seteoExtremoCajas)
+        self.caja_424.valueChanged.connect(self.seteoExtremoCajas)
 
         # MENU.
         self.actionAsistente.triggered.connect(self.ventanaAsistente)
@@ -622,29 +649,76 @@ class Main(QMainWindow):
         self.caja_402.setValue(dato_4[disp][0][2])
         self.caja_403.setValue(dato_4[disp][0][3])
         self.caja_404.setValue(dato_4[disp][0][4])
-        self.caja_405.setValue(dato_4[disp][0][5])
-        self.caja_406.setValue(dato_4[disp][0][6])
-        self.caja_407.setValue(dato_4[disp][0][7])
-        self.caja_408.setValue(dato_4[disp][0][8])
-        self.caja_409.setValue(dato_4[disp][0][9])
-        self.caja_410.setValue(dato_4[disp][0][10])
-        self.caja_411.setValue(dato_4[disp][0][11])
-        self.caja_412.setValue(dato_4[disp][0][12])
-        self.caja_413.setValue(dato_4[disp][0][13])
-        self.caja_414.setValue(dato_4[disp][0][14])
-        self.caja_415.setValue(dato_4[disp][0][15])
-        self.caja_416.setValue(dato_4[disp][0][16])
-        self.caja_417.setValue(dato_4[disp][0][17])
-        self.caja_418.setValue(dato_4[disp][0][18])
-        self.caja_419.setValue(dato_4[disp][0][19])
-        self.caja_420.setValue(dato_4[disp][0][20])
-        self.caja_421.setValue(dato_4[disp][0][21])
-        self.caja_422.setValue(dato_4[disp][0][22])
-        self.caja_423.setValue(dato_4[disp][0][23])
-        self.caja_424.setValue(dato_4[disp][0][24])
+        self.caja_405.setValue(dato_4[disp][0][5])      # % Fuerza 1
+        self.caja_406.setValue(dato_4[disp][0][6])      # % Fuerza 2
+        self.caja_407.setValue(dato_4[disp][0][7])      # % Fuerza 3
+        self.caja_408.setValue(dato_4[disp][0][8])      # % Fuerza 4
+        self.caja_409.setValue(dato_4[disp][0][9])      # % Fuerza 5
+        self.caja_410.setValue(dato_4[disp][0][10])     # Valor Fuerza 1
+        self.caja_411.setValue(dato_4[disp][0][11])     # Valor Fuerza 2
+        self.caja_412.setValue(dato_4[disp][0][12])     # Valor Fuerza 3
+        self.caja_413.setValue(dato_4[disp][0][13])     # Valor Fuerza 4
+        self.caja_414.setValue(dato_4[disp][0][14])     # Valor Fuerza 5
+        self.caja_415.setValue(dato_4[disp][0][15])     # % Intensidad 1
+        self.caja_416.setValue(dato_4[disp][0][16])     # % Intensidad 2
+        self.caja_417.setValue(dato_4[disp][0][17])     # % Intensidad 3
+        self.caja_418.setValue(dato_4[disp][0][18])     # % Intensidad 4
+        self.caja_419.setValue(dato_4[disp][0][19])     # % Intensidad 5
+        self.caja_420.setValue(dato_4[disp][0][20])     # Valor Intensidad 1
+        self.caja_421.setValue(dato_4[disp][0][21])     # Valor Intensidad 2
+        self.caja_422.setValue(dato_4[disp][0][22])     # Valor Intensidad 3
+        self.caja_423.setValue(dato_4[disp][0][23])     # Valor Intensidad 4
+        self.caja_424.setValue(dato_4[disp][0][24])     # Valor Intensidad 5
 
         self.bloqueoSignals(False)
         self.ocultar()
+
+    def seteoExtremoCajas(self):
+        """
+        Agrego los extremos de fuerza y corriente para las cajas.
+
+        Fuerza Inferior: cs['CALIBRACION'][disp][0][10]
+        Fuerza Superior: cs['CALIBRACION'][disp][0][14]
+
+        Intensidad Inferior: cs['CALIBRACION'][disp][0][20] 
+        Intensidad Superior: cs['CALIBRACION'][disp][0][19]   
+        """
+
+        self.bloqueoSignals(True) 
+
+        disp = self.caja_1.value() - 1
+        #prog = self.caja_2.value() - 1
+
+        # FuerzaExtremoInferior = cs['CALIBRACION'][disp][0][10]
+        FuerzaExtremoSuperior = cs['CALIBRACION'][disp][0][14]
+
+        # IntensidadExtremoInferior = cs['CALIBRACION'][disp][0][20]     
+        IntensidadExtremoSuperior = cs['CALIBRACION'][disp][0][24]        
+
+        # SOLDADURA.
+        self.caja_104.setMaximum(IntensidadExtremoSuperior)
+        self.caja_107.setMaximum(IntensidadExtremoSuperior)
+        self.caja_111.setMaximum(IntensidadExtremoSuperior)
+
+        self.caja_114.setMaximum(IntensidadExtremoSuperior)
+        self.caja_116.setMaximum(IntensidadExtremoSuperior)
+
+        self.caja_118.setMaximum(FuerzaExtremoSuperior)
+
+        # SERVICIOS.
+        self.caja_202.setMaximum(FuerzaExtremoSuperior)
+        self.caja_203.setMaximum(FuerzaExtremoSuperior)
+
+        # MONITOR.
+        self.caja_309.setMaximum(IntensidadExtremoSuperior)
+
+        self.caja_305.setMaximum(FuerzaExtremoSuperior)
+        self.caja_311.setMaximum(FuerzaExtremoSuperior)
+
+        # CALIBRACION.
+        self.caja_402.setMaximum(FuerzaExtremoSuperior)
+
+        self.bloqueoSignals(False)
 
     def seteoDicc(self):
         """
