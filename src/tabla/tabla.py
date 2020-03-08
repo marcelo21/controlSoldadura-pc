@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QComboBox, QSpinBox, QLineEdit
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QComboBox, QSpinBox, QLineEdit, QMessageBox
 from PyQt5 import uic, QtGui, QtCore
 
 import sys
@@ -21,9 +21,39 @@ class Tabla(QDialog):
         """
         """
 
-        cantidad = int(self.combo_100.currentText())
-        for i in range(0, cantidad):
-            self.table_100.removeRow(1)
+        fila = self.table_100.currentRow()        
+
+        if(fila == -1):
+            fila = 0
+        else:
+            fila = fila
+
+        if(self.table_100.rowCount() > 1):
+
+            programa = self.table_100.cellWidget(fila, 0).value()
+            dispositivo = int(self.table_100.cellWidget(fila, 1).currentText())
+
+            texto = '¿Borrar el programa [' + str(programa) + '] del Control?'
+            pregunta = QMessageBox.question(
+                self, 
+                "Atencion", 
+                texto, 
+                QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel
+            )
+
+            if pregunta == QMessageBox.Yes:
+                #bloquearPrograma(programa, dispositivo)
+                self.table_100.removeRow(fila) 
+
+            elif pregunta == QMessageBox.No:
+                self.table_100.removeRow(fila) 
+
+            else:
+                pass
+            
+        #cantidad = int(self.combo_100.currentText())
+        #for i in range(0, cantidad):
+        #    self.table_100.removeRow(1)        
 
     def agregarFilas(self):
         """

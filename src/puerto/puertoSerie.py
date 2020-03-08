@@ -130,6 +130,21 @@ class PuertoSerie(QDialog):
 
                 self.barraProgreso(100 * cont / 1275)
 
+    def bloquearPrograma(self, dispositivo, programa):
+        """
+        """
+
+        self.barraProgreso( 1 )
+
+        D_INI_SOLD = 0x00B0
+
+        dato = 255
+
+        D_POSC_MEM = ( ( 0x4020 * (dispositivo - 0x0001) ) + ( 0x0040 * (programa - 0x0001) ) )
+        self.enviar(0x0027 + D_INI_SOLD + D_POSC_MEM, dato)                  # Comportamiento.
+
+        self.barraProgreso( 100 )
+
     def enviarDatosConfiguracion(self, cs):
         """
         """

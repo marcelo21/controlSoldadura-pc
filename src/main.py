@@ -689,11 +689,13 @@ class Main(QMainWindow):
         disp = self.caja_1.value() - 1
         #prog = self.caja_2.value() - 1
 
-        # FuerzaExtremoInferior = cs['CALIBRACION'][disp][0][10]
+        FuerzaExtremoInferior = cs['CALIBRACION'][disp][0][10]
         FuerzaExtremoSuperior = cs['CALIBRACION'][disp][0][14]
 
-        # IntensidadExtremoInferior = cs['CALIBRACION'][disp][0][20]     
-        IntensidadExtremoSuperior = cs['CALIBRACION'][disp][0][24]        
+        IntensidadExtremoInferior = cs['CALIBRACION'][disp][0][20]     
+        IntensidadExtremoSuperior = cs['CALIBRACION'][disp][0][24]       
+
+        # --- EXTREMO SUPERIOR. 
 
         # SOLDADURA.
         self.caja_104.setMaximum(IntensidadExtremoSuperior)
@@ -717,8 +719,83 @@ class Main(QMainWindow):
 
         # CALIBRACION.
         self.caja_402.setMaximum(FuerzaExtremoSuperior)
+        
+        # --- EXTREMO INFERIOR.
+        
+        caja = 0
+        caja = self.caja_104
+        self.valorFueraDeRango(caja, IntensidadExtremoInferior)
+
+        caja = 0
+        caja = self.caja_107
+        self.valorFueraDeRango(caja, IntensidadExtremoInferior)
+
+        caja = 0
+        caja = self.caja_111
+        self.valorFueraDeRango(caja, IntensidadExtremoInferior)
+
+        caja = 0
+        caja = self.caja_114
+        self.valorFueraDeRango(caja, IntensidadExtremoInferior)
+
+        caja = 0
+        caja = self.caja_116
+        self.valorFueraDeRango(caja, IntensidadExtremoInferior)
+
+        caja = 0
+        caja = self.caja_118
+        self.valorFueraDeRango(caja, FuerzaExtremoInferior)
+
+        caja = 0
+        caja = self.caja_202
+        self.valorFueraDeRango(caja, FuerzaExtremoInferior)
+
+        caja = 0
+        caja = self.caja_203
+        self.valorFueraDeRango(caja, FuerzaExtremoInferior)
+
+        caja = 0
+        caja = self.caja_309
+        self.valorFueraDeRango(caja, IntensidadExtremoInferior)
+
+        caja = 0
+        caja = self.caja_305
+        self.valorFueraDeRango(caja, FuerzaExtremoInferior)
+
+        caja = 0
+        caja = self.caja_311
+        self.valorFueraDeRango(caja, FuerzaExtremoInferior)
+
+        caja = 0
+        caja = self.caja_402
+        self.valorFueraDeRango(caja, FuerzaExtremoInferior)
 
         self.bloqueoSignals(False)
+
+    def valorFueraDeRango(self, caja, extremoInferior):
+        """
+        """
+
+        if((caja.value() < extremoInferior) and (caja.value() != 0)):
+            self.cambioColor(caja, 'red')
+
+            texto = 'El valor [' + str(caja.value()) + '] esta fuera de rango'
+            QMessageBox.warning(
+                self,
+                'Error',
+                texto
+            )
+
+            caja.setValue(extremoInferior)
+            self.cambioColor(caja, 'white') 
+
+    def cambioColor(self, caja, color):
+        """
+        """
+
+        #string = "color:" + color + ";"
+        string = "background-color:" + color + ";"
+        caja.setStyleSheet(string)
 
     def seteoDicc(self):
         """
