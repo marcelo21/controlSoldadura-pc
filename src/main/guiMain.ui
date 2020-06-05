@@ -324,9 +324,6 @@
                   <height>16777215</height>
                  </size>
                 </property>
-                <property name="wrapping">
-                 <bool>true</bool>
-                </property>
                </widget>
               </item>
               <item row="3" column="12">

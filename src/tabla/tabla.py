@@ -33,19 +33,17 @@ class Tabla(QDialog):
             programa = self.table_100.cellWidget(fila, 0).value()
             dispositivo = int(self.table_100.cellWidget(fila, 1).currentText())
 
-            texto = '¿Borrar el programa [' + str(programa) + '] del Control?'
+            texto = '¿Quiere borrar el programa [' + str(programa) + '] de la Tabla?'
             pregunta = QMessageBox.question(
                 self, 
                 "Atencion", 
                 texto, 
-                QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel
+                #QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel
+                QMessageBox.Yes | QMessageBox.Cancel
             )
 
             if pregunta == QMessageBox.Yes:
                 #bloquearPrograma(programa, dispositivo)
-                self.table_100.removeRow(fila) 
-
-            elif pregunta == QMessageBox.No:
                 self.table_100.removeRow(fila) 
 
             else:
