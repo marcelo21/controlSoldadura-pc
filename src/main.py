@@ -74,6 +74,10 @@ class Main(QMainWindow):
         self.caja_116.valueChanged.connect(self.valorCajas)
         self.caja_117.valueChanged.connect(self.valorCajas)
         self.caja_118.valueChanged.connect(self.valorCajas)
+        self.caja_119.valueChanged.connect(self.valorCajas)
+        self.caja_120.valueChanged.connect(self.valorCajas)
+        self.caja_121.valueChanged.connect(self.valorCajas)
+        self.caja_122.valueChanged.connect(self.valorCajas)
 
         self.caja_200.valueChanged.connect(self.valorCajas)
         self.caja_201.valueChanged.connect(self.valorCajas)
