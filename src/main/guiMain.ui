@@ -20,7 +20,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_6">
     <item>
-     <widget class="QFrame" name="frame_6">
+     <widget class="QFrame" name="frame_1">
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
       </property>
@@ -143,189 +143,6 @@
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QGridLayout" name="gridLayout_2">
-              <item row="3" column="3">
-               <widget class="QLabel" name="lbl_108">
-                <property name="text">
-                 <string>Intensidad 1</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="6">
-               <widget class="QSpinBox" name="caja_106">
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>100</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item row="17" column="0" colspan="14">
-               <spacer name="verticalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Preferred</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="12" column="3">
-               <widget class="QLabel" name="lbl_125">
-                <property name="text">
-                 <string>Soldadura 4</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="12" column="9">
-               <widget class="QLabel" name="lbl_129">
-                <property name="text">
-                 <string>Soldadura 5</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="11" column="0" colspan="14">
-               <spacer name="verticalSpacer_6">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="lbl_102">
-                <property name="text">
-                 <string>Apriete</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="4">
-               <widget class="QLabel" name="lbl_109">
-                <property name="text">
-                 <string>[KA]</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="3">
-               <widget class="QDoubleSpinBox" name="caja_104">
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>100</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="4">
-               <widget class="QLabel" name="lbl_107">
-                <property name="text">
-                 <string>[ciclos]</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="13">
-               <widget class="QLabel" name="lbl_134">
-                <property name="text">
-                 <string>[ciclos]</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="9">
-               <widget class="QDoubleSpinBox" name="caja_111">
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>100</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="12">
-               <widget class="QSpinBox" name="caja_117">
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>100</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="value">
-                 <number>10</number>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="9">
-               <widget class="QLabel" name="lbl_121">
-                <property name="text">
-                 <string>Intensidad 3</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="6">
-               <widget class="QDoubleSpinBox" name="caja_107">
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>100</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
               <item row="3" column="12">
                <widget class="QLabel" name="lbl_135">
                 <property name="text">
@@ -333,13 +150,6 @@
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="1">
-               <widget class="QLabel" name="lbl_103">
-                <property name="text">
-                 <string>[ciclos]</string>
                 </property>
                </widget>
               </item>
@@ -362,22 +172,67 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="7">
-               <widget class="QLabel" name="lbl_113">
+              <item row="1" column="12">
+               <widget class="QSpinBox" name="caja_117">
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="value">
+                 <number>10</number>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="6">
+               <widget class="QDoubleSpinBox" name="caja_107">
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="4">
+               <widget class="QLabel" name="lbl_107">
                 <property name="text">
                  <string>[ciclos]</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
-               <widget class="QLabel" name="lbl_101">
+              <item row="0" column="9">
+               <widget class="QLabel" name="lbl_119">
+                <property name="text">
+                 <string>Soldadura 3</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="13">
+               <widget class="QLabel" name="lbl_134">
                 <property name="text">
                  <string>[ciclos]</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="3">
-               <widget class="QSpinBox" name="caja_103">
+              <item row="1" column="6">
+               <widget class="QSpinBox" name="caja_106">
                 <property name="minimumSize">
                  <size>
                   <width>100</width>
@@ -408,49 +263,32 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="10">
-               <widget class="QLabel" name="lbl_120">
-                <property name="text">
-                 <string>[ciclos]</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="6">
-               <widget class="QLabel" name="lbl_114">
-                <property name="text">
-                 <string>Intensidad 2</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="13" column="10">
-               <widget class="QLabel" name="lbl_130">
-                <property name="text">
-                 <string>[ciclos]</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="9">
-               <widget class="QLabel" name="lbl_119">
-                <property name="text">
-                 <string>Soldadura 3</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="16" column="10">
-               <widget class="QLabel" name="lbl_132">
+              <item row="16" column="4">
+               <widget class="QLabel" name="lbl_128">
                 <property name="text">
                  <string>[KA]</string>
                 </property>
                </widget>
               </item>
-              <item row="7" column="0">
-               <widget class="QSpinBox" name="caja_102">
+              <item row="3" column="3">
+               <widget class="QLabel" name="lbl_108">
+                <property name="text">
+                 <string>Intensidad 1</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLabel" name="lbl_101">
+                <property name="text">
+                 <string>[ciclos]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="3">
+               <widget class="QSpinBox" name="caja_103">
                 <property name="minimumSize">
                  <size>
                   <width>100</width>
@@ -465,8 +303,102 @@
                 </property>
                </widget>
               </item>
-              <item row="16" column="4">
-               <widget class="QLabel" name="lbl_128">
+              <item row="4" column="4">
+               <widget class="QLabel" name="lbl_109">
+                <property name="text">
+                 <string>[KA]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="6">
+               <widget class="QLabel" name="lbl_114">
+                <property name="text">
+                 <string>Intensidad 2</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="3">
+               <widget class="QLabel" name="lbl_125">
+                <property name="text">
+                 <string>Soldadura 4</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="7">
+               <widget class="QLabel" name="lbl_113">
+                <property name="text">
+                 <string>[ciclos]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="3">
+               <widget class="QDoubleSpinBox" name="caja_104">
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="10">
+               <widget class="QLabel" name="lbl_120">
+                <property name="text">
+                 <string>[ciclos]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="13" column="10">
+               <widget class="QLabel" name="lbl_130">
+                <property name="text">
+                 <string>[ciclos]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QLabel" name="lbl_103">
+                <property name="text">
+                 <string>[ciclos]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="lbl_102">
+                <property name="text">
+                 <string>Apriete</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <spacer name="horizontalSpacer_6">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="4" column="10">
+               <widget class="QLabel" name="lbl_122">
                 <property name="text">
                  <string>[KA]</string>
                 </property>
@@ -482,18 +414,44 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="lbl_100">
+              <item row="3" column="9">
+               <widget class="QLabel" name="lbl_121">
                 <property name="text">
-                 <string>Acercamiento</string>
+                 <string>Intensidad 3</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
                 </property>
                </widget>
               </item>
-              <item row="4" column="10">
-               <widget class="QLabel" name="lbl_122">
+              <item row="11" column="0" colspan="14">
+               <spacer name="verticalSpacer_6">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="1" column="11">
+               <spacer name="horizontalSpacer_9">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="4" column="7">
+               <widget class="QLabel" name="lbl_115">
                 <property name="text">
                  <string>[KA]</string>
                 </property>
@@ -515,8 +473,63 @@
                 </property>
                </widget>
               </item>
-              <item row="7" column="9">
-               <widget class="QSpinBox" name="caja_112">
+              <item row="10" column="6">
+               <widget class="QSpinBox" name="caja_109">
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="8">
+               <spacer name="horizontalSpacer_8">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="12" column="9">
+               <widget class="QLabel" name="lbl_129">
+                <property name="text">
+                 <string>Soldadura 5</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0" colspan="14">
+               <spacer name="verticalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="7" column="6">
+               <widget class="QSpinBox" name="caja_108">
                 <property name="minimumSize">
                  <size>
                   <width>100</width>
@@ -531,8 +544,100 @@
                 </property>
                </widget>
               </item>
-              <item row="7" column="6">
-               <widget class="QSpinBox" name="caja_108">
+              <item row="6" column="3">
+               <widget class="QLabel" name="lbl_110">
+                <property name="text">
+                 <string>Frio 1</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="lbl_100">
+                <property name="text">
+                 <string>Acercamiento</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="9">
+               <widget class="QLabel" name="lbl_123">
+                <property name="text">
+                 <string>Frio 3</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="15" column="9">
+               <widget class="QLabel" name="lbl_131">
+                <property name="text">
+                 <string>Intensidad 5</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="4">
+               <widget class="QLabel" name="lbl_111">
+                <property name="text">
+                 <string>[ciclos]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="12">
+               <widget class="QLabel" name="lbl_133">
+                <property name="text">
+                 <string>Forja</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0" colspan="14">
+               <spacer name="verticalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="4" column="12">
+               <widget class="QSpinBox" name="caja_118">
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="maximum">
+                 <number>9999</number>
+                </property>
+                <property name="value">
+                 <number>500</number>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="9">
+               <widget class="QDoubleSpinBox" name="caja_111">
                 <property name="minimumSize">
                  <size>
                   <width>100</width>
@@ -564,17 +669,26 @@
                 </property>
                </widget>
               </item>
-              <item row="4" column="13">
-               <widget class="QLabel" name="lbl_136">
-                <property name="text">
-                 <string>[daN]</string>
+              <item row="7" column="0">
+               <widget class="QSpinBox" name="caja_102">
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
                </widget>
               </item>
-              <item row="7" column="10">
-               <widget class="QLabel" name="lbl_124">
+              <item row="16" column="10">
+               <widget class="QLabel" name="lbl_132">
                 <property name="text">
-                 <string>[ciclos]</string>
+                 <string>[KA]</string>
                 </property>
                </widget>
               </item>
@@ -582,180 +696,6 @@
                <widget class="QLabel" name="lbl_106">
                 <property name="text">
                  <string>Soldadura 1</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="12">
-               <widget class="QLabel" name="lbl_133">
-                <property name="text">
-                 <string>Forja</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="7">
-               <widget class="QLabel" name="lbl_115">
-                <property name="text">
-                 <string>[KA]</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="3">
-               <widget class="QLabel" name="lbl_110">
-                <property name="text">
-                 <string>Frio 1</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QSpinBox" name="caja_100">
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>100</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="value">
-                 <number>50</number>
-                </property>
-               </widget>
-              </item>
-              <item row="10" column="6">
-               <widget class="QSpinBox" name="caja_109">
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>100</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="minimum">
-                 <number>1</number>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="0">
-               <widget class="QLabel" name="lbl_104">
-                <property name="text">
-                 <string>Repeticion</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="13" column="3">
-               <widget class="QSpinBox" name="caja_113">
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>100</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-               </widget>
-              </item>
-              <item row="13" column="4">
-               <widget class="QLabel" name="lbl_126">
-                <property name="text">
-                 <string>[ciclos]</string>
-                </property>
-               </widget>
-              </item>
-              <item row="15" column="3">
-               <widget class="QLabel" name="lbl_127">
-                <property name="text">
-                 <string>Intensidad 4</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="12">
-               <widget class="QSpinBox" name="caja_118">
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>100</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="maximum">
-                 <number>9999</number>
-                </property>
-                <property name="value">
-                 <number>500</number>
-                </property>
-               </widget>
-              </item>
-              <item row="15" column="9">
-               <widget class="QLabel" name="lbl_131">
-                <property name="text">
-                 <string>Intensidad 5</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="6">
-               <widget class="QLabel" name="lbl_112">
-                <property name="text">
-                 <string>Soldadura 2</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="7">
-               <widget class="QLabel" name="lbl_117">
-                <property name="text">
-                 <string>[ciclos]</string>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="4">
-               <widget class="QLabel" name="lbl_111">
-                <property name="text">
-                 <string>[ciclos]</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="9">
-               <widget class="QLabel" name="lbl_123">
-                <property name="text">
-                 <string>Frio 3</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -778,6 +718,68 @@
                 </property>
                </widget>
               </item>
+              <item row="13" column="3">
+               <widget class="QSpinBox" name="caja_113">
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="9">
+               <widget class="QSpinBox" name="caja_112">
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="7">
+               <widget class="QLabel" name="lbl_117">
+                <property name="text">
+                 <string>[ciclos]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="5">
+               <spacer name="horizontalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="lbl_104">
+                <property name="text">
+                 <string>Repeticion</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
               <item row="16" column="9">
                <widget class="QDoubleSpinBox" name="caja_116">
                 <property name="minimumSize">
@@ -794,21 +796,68 @@
                 </property>
                </widget>
               </item>
-              <item row="5" column="0" colspan="14">
-               <spacer name="verticalSpacer_4">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+              <item row="0" column="6">
+               <widget class="QLabel" name="lbl_112">
+                <property name="text">
+                 <string>Soldadura 2</string>
                 </property>
-                <property name="sizeHint" stdset="0">
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="13" column="4">
+               <widget class="QLabel" name="lbl_126">
+                <property name="text">
+                 <string>[ciclos]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="15" column="3">
+               <widget class="QLabel" name="lbl_127">
+                <property name="text">
+                 <string>Intensidad 4</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="10">
+               <widget class="QLabel" name="lbl_124">
+                <property name="text">
+                 <string>[ciclos]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="13">
+               <widget class="QLabel" name="lbl_136">
+                <property name="text">
+                 <string>[daN]</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QSpinBox" name="caja_100">
+                <property name="minimumSize">
                  <size>
-                  <width>20</width>
-                  <height>40</height>
+                  <width>100</width>
+                  <height>0</height>
                  </size>
                 </property>
-               </spacer>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="value">
+                 <number>50</number>
+                </property>
+               </widget>
               </item>
-              <item row="2" column="0" colspan="14">
-               <spacer name="verticalSpacer_3">
+              <item row="14" column="0" colspan="14">
+               <spacer name="verticalSpacer_7">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
@@ -849,89 +898,181 @@
                 </property>
                </widget>
               </item>
-              <item row="14" column="0" colspan="14">
-               <spacer name="verticalSpacer_7">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+              <item row="17" column="0" colspan="14">
+               <widget class="QGroupBox" name="groupBox_11">
+                <property name="title">
+                 <string>Reajuste</string>
                 </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
+                <property name="flat">
+                 <bool>false</bool>
                 </property>
-               </spacer>
-              </item>
-              <item row="1" column="2">
-               <spacer name="horizontalSpacer_6">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                <property name="checkable">
+                 <bool>true</bool>
                 </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
+                <property name="checked">
+                 <bool>false</bool>
                 </property>
-               </spacer>
-              </item>
-              <item row="1" column="5">
-               <spacer name="horizontalSpacer_7">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="1" column="8">
-               <spacer name="horizontalSpacer_8">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="1" column="11">
-               <spacer name="horizontalSpacer_9">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
+                <layout class="QGridLayout" name="gridLayout_16">
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
+                 <item row="1" column="2">
+                  <widget class="QSpinBox" name="caja_121">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>100</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="3">
+                  <widget class="QSpinBox" name="caja_122">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>100</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="value">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QDoubleSpinBox" name="caja_119">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>100</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QLabel" name="lbl_141">
+                   <property name="text">
+                    <string>Tol. Inferior</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="3">
+                  <widget class="QLabel" name="lbl_144">
+                   <property name="text">
+                    <string>[%]</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="2">
+                  <widget class="QLabel" name="lbl_142">
+                   <property name="text">
+                    <string>[%]</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="3">
+                  <widget class="QLabel" name="lbl_143">
+                   <property name="text">
+                    <string>Tol. Superior</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLabel" name="lbl_139">
+                   <property name="text">
+                    <string>OFFSET F.</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QSpinBox" name="caja_120">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>100</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="maximum">
+                    <number>9999</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="lbl_137">
+                   <property name="text">
+                    <string>OFFSET I.</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="lbl_138">
+                   <property name="text">
+                    <string>[KA]</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QLabel" name="lbl_140">
+                   <property name="text">
+                    <string>[daN]</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
               </item>
              </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QFrame" name="frame_2">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>100</height>
-              </size>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::StyledPanel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Raised</enum>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_2"/>
             </widget>
            </item>
            <item>
@@ -1197,7 +1338,7 @@
                  <item row="0" column="3">
                   <widget class="QLabel" name="lbl_202">
                    <property name="text">
-                    <string>Mantenido</string>
+                    <string>Apriete</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
@@ -2577,9 +2718,6 @@
                 </property>
                </spacer>
               </item>
-              <item row="4" column="0" colspan="2">
-               <widget class="QGraphicsView" name="canvas_400"/>
-              </item>
               <item row="3" column="0" colspan="2">
                <spacer name="verticalSpacer_16">
                 <property name="orientation">
@@ -3906,6 +4044,12 @@
                  </item>
                 </layout>
                </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QGraphicsView" name="canvas_400"/>
+              </item>
+              <item row="4" column="1">
+               <widget class="QGraphicsView" name="canvas_401"/>
               </item>
              </layout>
             </widget>

@@ -1,13 +1,12 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QFileDialog
 from PyQt5 import uic, QtCore
 
+import os
 import sys
-
-import numpy as np
-
 import datetime
 
-import os
+import numpy as np
+import pandas as pd
 
 from asistente.asistente import Asistente
 from configuracion.configuracion import Configuracion
@@ -21,7 +20,7 @@ cs = {
     'MONITOR'      : np.zeros((1, 1, 6)),
     'CALIBRACION'  : np.zeros((5, 1, 25)),
     'SERVICIOS'    : np.zeros((5, 1, 12)),
-    'SOLDADURA'    : np.zeros((5, 255, 22)),
+    'SOLDADURA'    : np.zeros((5, 255, 24)),    #Antes --- 'SOLDADURA' : np.zeros((5, 255, 22))
     'PROG_LISTA'   : [1],
     'DISP_LISTA'   : [1],
     'ETIQUETA'     : [""]    
@@ -187,6 +186,9 @@ class Main(QMainWindow):
         # CARGAR y GUARDAR.
         self.actionGuardar_Como.triggered.connect(self.guardar)
         self.actionAbrir.triggered.connect(self.cargar)
+
+        # EXPORTAR E IMPORTAR (desde excel).
+        self.actionExportar.triggered.connect(self.exportar)
 
         # LISTA DE ERRORES.
         self.actionErrores.triggered.connect(lambda: window_6.show())
@@ -531,6 +533,12 @@ class Main(QMainWindow):
         dato_1[disp][prog][17] = self.caja_117.value()
         dato_1[disp][prog][18] = self.caja_118.value()
 
+        dato_1[disp][prog][19] = self.caja_121.value()  # Tolerancia 1.
+        dato_1[disp][prog][20] = self.caja_122.value()  # Tolerancia 2.
+        # dato_1[disp][prog][21] = comportamiento
+        dato_1[disp][prog][22] = self.caja_119.value()  # Offset Intensidad.
+        dato_1[disp][prog][23] = self.caja_120.value()  # Offset Fuerza.
+
         #SERVICIOS
         dato_2[disp][0][0] = self.caja_200.value()
         dato_2[disp][0][1] = self.caja_201.value()
@@ -620,6 +628,11 @@ class Main(QMainWindow):
         self.caja_116.setValue(dato_1[disp][prog][16])
         self.caja_117.setValue(dato_1[disp][prog][17])
         self.caja_118.setValue(dato_1[disp][prog][18])
+
+        self.caja_119.setValue(dato_1[disp][prog][22])  # Offset intensidad.
+        self.caja_120.setValue(dato_1[disp][prog][23])  # Offset fuerza.
+        self.caja_121.setValue(dato_1[disp][prog][19])  # Tolerancia 1.
+        self.caja_122.setValue(dato_1[disp][prog][20])  # Tolerancia 2.
 
         #SERVICIOS
         self.caja_200.setValue(dato_2[disp][0][0])
@@ -827,6 +840,11 @@ class Main(QMainWindow):
         dato_1[ : , : , 16] = self.caja_116.value()
         dato_1[ : , : , 17] = self.caja_117.value()
         dato_1[ : , : , 18] = self.caja_118.value()
+
+        dato_1[ : , : , 19] = self.caja_121.value() # Tolerancia 1.
+        dato_1[ : , : , 20] = self.caja_122.value() # Tolerancia 2.
+        dato_1[ : , : , 22] = self.caja_119.value() # Offset Intensidad.
+        dato_1[ : , : , 23] = self.caja_120.value() # Offset Fuerza.
 
         #SERVICIOS
         dato_2[ : , : , 0] = self.caja_200.value()
@@ -1112,11 +1130,13 @@ class Main(QMainWindow):
             direccion = direccion[0]
             filename = np.load(direccion, allow_pickle=True)
             
-            cs['CONFIGURACION'] = filename.item().get("CONFIGURACION")
-            cs['MONITOR'] = filename.item().get("MONITOR")
-            cs['CALIBRACION'] = filename.item().get("CALIBRACION")
-            cs['SERVICIOS'] = filename.item().get("SERVICIOS")
-            cs['SOLDADURA'] = filename.item().get("SOLDADURA")
+            for key in ['CONFIGURACION', 'MONITOR', 'CALIBRACION', 'SERVICIOS', 'SOLDADURA']:
+                if( cs[key].shape == filename.item().get(key).shape ):
+                    cs[key] = filename.item().get(key)
+                else:
+                    dimension = filename.item().get(key).shape
+                    cs[key][ :dimension[0] , :dimension[1] , :dimension[2] ] = filename.item().get(key)[ : , : , :dimension[2] ]
+                    
             cs['PROG_LISTA'] = filename.item().get("PROG_LISTA")
             cs['DISP_LISTA'] = filename.item().get("DISP_LISTA")
             cs['ETIQUETA'] = filename.item().get("ETIQUETA")
@@ -1127,6 +1147,152 @@ class Main(QMainWindow):
 
         except:
             pass
+
+    def exportar(self):
+        """
+        """
+
+        os.chdir(os.path.expanduser("~"))
+
+        fecha = str(datetime.datetime.now().date())
+        nombre_archivo = ("save_" + fecha + ".xlsx") 
+
+        direccion = QFileDialog.getSaveFileName(self, "Guardar", nombre_archivo)
+        direccion = direccion[0]        
+        
+        # SOLDADURA.
+
+        cols_sold = [
+            'Acercamiento',
+            'Apriete',
+            'Repeticion',
+            'Soldadura 1',
+            'Intensidad 1',
+            'Frio 1',
+            'Soldadura 2',
+            'Intensidad 2',
+            'Frio 2',
+            'Impulsos',
+            'Soldadura 3',
+            'Intensidad 3',
+            'Frio 3',
+            'Soldadura 4',
+            'Intensidad 4',
+            'Soldadura 5',
+            'Intensidad 5',
+            'Forja',
+            'Fuerza',
+            'Tolerancia Sup.',
+            'Tolerancia Inf.',
+            'Comportamiento',
+            'Offset I.',
+            'Offset F.'
+        ]
+
+        cant_prog_disp = [0, 0, 0, 0, 0]
+        for i in range( 0, len(cs['DISP_LISTA']) ):
+            if cs['DISP_LISTA'][i] == 1:
+                cant_prog_disp[0] += 1
+            elif cs['DISP_LISTA'][i] == 2:
+                cant_prog_disp[1] += 1
+            elif cs['DISP_LISTA'][i] == 3:
+                cant_prog_disp[2] += 1
+            elif cs['DISP_LISTA'][i] == 4:
+                cant_prog_disp[3] += 1
+            elif cs['DISP_LISTA'][i] == 5:
+                cant_prog_disp[4] += 1
+            else:
+                pass
+         
+        df_sold = [0, 0, 0, 0, 0]
+        for disp in range(0, 5):
+            aux = np.zeros( (cant_prog_disp[disp], 24) )
+            for i in range(0, cant_prog_disp[disp]):
+                prog = cs['PROG_LISTA'][i]
+                aux[i][:] = cs['SOLDADURA'][disp][prog]
+
+            df_sold[disp] = pd.DataFrame(aux, columns=cols_sold)
+
+        # SERVICIOS.
+
+        cols_serv = [
+            'Acercamiento',
+            'Apriete',
+            'Fuerza Fresado',
+            'Fuerza Cambio E.',
+            'Curva',
+            'Incremento',
+            'Puntos',
+            'Alarma Puntos',
+            'Contador Puntos',
+            'Fresados',
+            'Alarma Fresados',
+            'Contador Fresados'
+        ]
+
+        df_serv = [0, 0, 0, 0, 0]
+        for disp in range(0, 5):
+            df_serv[disp] = pd.DataFrame(cs['SERVICIOS'][disp], columns=cols_serv)
+            
+        # CALIBRACION.        
+
+        cols_calib = [
+            'Acercamiento',
+            'Apriete',
+            'Fuerza',
+            'Tiempo Soldadura',
+            'Tiempo Mantenido',
+            'Tension 1 [V]',
+            'Tension 2 [V]',
+            'Tension 3 [V]',
+            'Tension 4 [V]',
+            'Tension 5 [V]',
+            'Fuerza 1 [daN]',
+            'Fuerza 2 [daN]',
+            'Fuerza 3 [daN]',
+            'Fuerza 4 [daN]',
+            'Fuerza 5 [daN]',
+            'Porcentaje 1 [%]',
+            'Porcentaje 2 [%]',
+            'Porcentaje 3 [%]',
+            'Porcentaje 4 [%]',
+            'Porcentaje 5 [%]',
+            'Intensidad 1 [KA]',
+            'Intensidad 2 [KA]',
+            'Intensidad 3 [KA]',
+            'Intensidad 4 [KA]',
+            'Intensidad 5 [KA]',
+        ]
+
+        df_calib = [0, 0, 0, 0, 0]
+        for disp in range(0, 5):
+            df_calib[disp] = pd.DataFrame(cs['CALIBRACION'][disp], columns=cols_calib)
+
+        # GUARDAR.        
+
+        start = [0, 0, 0, 0, 0]
+
+        start[0] = 0
+        start[1] = cant_prog_disp[0] + 3
+        start[2] = cant_prog_disp[0] + cant_prog_disp[1] + 3 + 3
+        start[3] = cant_prog_disp[0] + cant_prog_disp[1] + cant_prog_disp[2] + 3 + 3 + 3
+        start[4] = cant_prog_disp[0] + cant_prog_disp[1] + cant_prog_disp[2] + cant_prog_disp[3] + 3 + 3 + 3 + 3
+
+        with pd.ExcelWriter(direccion, engine='xlsxwriter') as writer:
+
+            for disp in range(0, 5):
+                if disp + 1 in cs['DISP_LISTA']:
+                    df_sold[disp].to_excel(writer, sheet_name='PROGRAMACION', startrow = start[disp])
+                    df_serv[disp].to_excel(writer, sheet_name='SERVICIOS', startrow = start[disp])
+                    df_calib[disp].to_excel(writer, sheet_name='CALIBRACION', startrow = start[disp])
+                else:
+                    pass
+
+    def importar(self):
+        """
+        """
+
+        pass
 
 
 if __name__ == '__main__':
