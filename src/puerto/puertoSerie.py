@@ -98,18 +98,20 @@ class PuertoSerie(QDialog):
         """
 
         valor_1 = self.conversorTension(calibracion[dispActual, 0, 5], calibracion, dispActual)
-        valor_2 = round(offset * valor_1 / calibracion[dispActual, 0, 10])
+        valor_2 = int(round(offset * valor_1 / calibracion[dispActual, 0, 10]))
 
-        return int(valor_2)
+        return valor_2
 
     def calcularPorcentajeOffset(self, offset, calibracion, dispActual):
         """
         """
 
         valor_1 = self.conversorPorcentaje(calibracion[dispActual, 0, 15], calibracion, dispActual)
-        valor_2 = round(offset * valor_1 / calibracion[dispActual, 0, 20])
+        valor_2 = int(round(offset * valor_1 / calibracion[dispActual, 0, 20]))
 
-        return int(valor_2)
+        #print("% CS offset:", valor_2)
+
+        return valor_2
 
     def borrarEeprom(self):
         """

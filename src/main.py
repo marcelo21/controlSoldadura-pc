@@ -613,79 +613,79 @@ class Main(QMainWindow):
         prog = self.caja_2.value() - 1
 
         #SOLDADURA
-        self.caja_100.setValue(dato_1[disp][prog][0])
-        self.caja_101.setValue(dato_1[disp][prog][1])
-        self.caja_102.setValue(dato_1[disp][prog][2])
-        self.caja_103.setValue(dato_1[disp][prog][3])
-        self.caja_104.setValue(dato_1[disp][prog][4])
-        self.caja_105.setValue(dato_1[disp][prog][5])
-        self.caja_106.setValue(dato_1[disp][prog][6])
-        self.caja_107.setValue(dato_1[disp][prog][7])
-        self.caja_108.setValue(dato_1[disp][prog][8])
-        self.caja_109.setValue(dato_1[disp][prog][9])
-        self.caja_110.setValue(dato_1[disp][prog][10])
-        self.caja_111.setValue(dato_1[disp][prog][11])
-        self.caja_112.setValue(dato_1[disp][prog][12])
-        self.caja_113.setValue(dato_1[disp][prog][13])
-        self.caja_114.setValue(dato_1[disp][prog][14])
-        self.caja_115.setValue(dato_1[disp][prog][15])
-        self.caja_116.setValue(dato_1[disp][prog][16])
-        self.caja_117.setValue(dato_1[disp][prog][17])
-        self.caja_118.setValue(dato_1[disp][prog][18])
+        self.caja_100.setValue( int( dato_1[disp][prog][0]) )
+        self.caja_101.setValue( int( dato_1[disp][prog][1]) )
+        self.caja_102.setValue( int( dato_1[disp][prog][2]) )
+        self.caja_103.setValue( int( dato_1[disp][prog][3]) )
+        self.caja_104.setValue(dato_1[disp][prog][4])           # float
+        self.caja_105.setValue( int(dato_1[disp][prog][5]) )
+        self.caja_106.setValue( int(dato_1[disp][prog][6]) )
+        self.caja_107.setValue(dato_1[disp][prog][7])           # float
+        self.caja_108.setValue( int(dato_1[disp][prog][8]) )
+        self.caja_109.setValue( int(dato_1[disp][prog][9]) )
+        self.caja_110.setValue( int(dato_1[disp][prog][10]) )
+        self.caja_111.setValue(dato_1[disp][prog][11])          # float
+        self.caja_112.setValue( int(dato_1[disp][prog][12]) )
+        self.caja_113.setValue( int(dato_1[disp][prog][13]) )
+        self.caja_114.setValue(dato_1[disp][prog][14])          # float
+        self.caja_115.setValue( int(dato_1[disp][prog][15]) )
+        self.caja_116.setValue(dato_1[disp][prog][16])          # float
+        self.caja_117.setValue( int(dato_1[disp][prog][17]) )
+        self.caja_118.setValue( int(dato_1[disp][prog][18]) )
 
-        self.caja_119.setValue(dato_1[disp][prog][22])  # Offset intensidad.
-        self.caja_120.setValue(dato_1[disp][prog][23])  # Offset fuerza.
-        self.caja_121.setValue(dato_1[disp][prog][19])  # Tolerancia 1.
-        self.caja_122.setValue(dato_1[disp][prog][20])  # Tolerancia 2.
+        self.caja_119.setValue(dato_1[disp][prog][22])          # Offset intensidad. float
+        self.caja_120.setValue( int(dato_1[disp][prog][23]) )   # Offset fuerza.
+        self.caja_121.setValue( int(dato_1[disp][prog][19]) )   # Tolerancia 1.
+        self.caja_122.setValue( int(dato_1[disp][prog][20]) )   # Tolerancia 2.
 
         #SERVICIOS
-        self.caja_200.setValue(dato_2[disp][0][0])
-        self.caja_201.setValue(dato_2[disp][0][1])
-        self.caja_202.setValue(dato_2[disp][0][2])
-        self.caja_203.setValue(dato_2[disp][0][3])
-        self.caja_204.setValue(dato_2[disp][0][4])
-        self.caja_205.setValue(dato_2[disp][0][5])
-        self.caja_206.setValue(dato_2[disp][0][6])
-        self.caja_207.setValue(dato_2[disp][0][7])
-        self.caja_208.setValue(dato_2[disp][0][8])
-        self.caja_209.setValue(dato_2[disp][0][9])
-        self.caja_210.setValue(dato_2[disp][0][10])
-        self.caja_211.setValue(dato_2[disp][0][11])
+        self.caja_200.setValue( int(dato_2[disp][0][0]) )
+        self.caja_201.setValue( int(dato_2[disp][0][1]) )
+        self.caja_202.setValue( int(dato_2[disp][0][2]) )
+        self.caja_203.setValue( int(dato_2[disp][0][3]) )
+        self.caja_204.setValue( int(dato_2[disp][0][4]) )
+        self.caja_205.setValue( int(dato_2[disp][0][5]) )
+        self.caja_206.setValue( int(dato_2[disp][0][6]) )
+        self.caja_207.setValue( int(dato_2[disp][0][7]) )
+        self.caja_208.setValue( int(dato_2[disp][0][8]) )
+        self.caja_209.setValue( int(dato_2[disp][0][9]) )
+        self.caja_210.setValue( int(dato_2[disp][0][10]) )
+        self.caja_211.setValue( int(dato_2[disp][0][11]) )
 
         #MONITOR
-        self.caja_300.setValue(dato_3[0][0][0])
-        self.caja_301.setValue(dato_3[0][0][1])
-        self.caja_308.setValue(dato_3[0][0][2])
-        self.caja_309.setValue(dato_3[0][0][3])
-        self.caja_304.setValue(dato_3[0][0][4])
-        self.caja_305.setValue(dato_3[0][0][5])
+        self.caja_300.setValue( int(dato_3[0][0][0]) )
+        self.caja_301.setValue( int(dato_3[0][0][1]) )
+        self.caja_308.setValue( int(dato_3[0][0][2]) )
+        self.caja_309.setValue(dato_3[0][0][3])                 # float
+        self.caja_304.setValue( int(dato_3[0][0][4]) )
+        self.caja_305.setValue( int(dato_3[0][0][5]) )
 
         #CALIBRACION
-        self.caja_400.setValue(dato_4[disp][0][0])
-        self.caja_401.setValue(dato_4[disp][0][1])
-        self.caja_402.setValue(dato_4[disp][0][2])
-        self.caja_403.setValue(dato_4[disp][0][3])
-        self.caja_404.setValue(dato_4[disp][0][4])
-        self.caja_405.setValue(dato_4[disp][0][5])      # % Fuerza 1
-        self.caja_406.setValue(dato_4[disp][0][6])      # % Fuerza 2
-        self.caja_407.setValue(dato_4[disp][0][7])      # % Fuerza 3
-        self.caja_408.setValue(dato_4[disp][0][8])      # % Fuerza 4
-        self.caja_409.setValue(dato_4[disp][0][9])      # % Fuerza 5
-        self.caja_410.setValue(dato_4[disp][0][10])     # Valor Fuerza 1
-        self.caja_411.setValue(dato_4[disp][0][11])     # Valor Fuerza 2
-        self.caja_412.setValue(dato_4[disp][0][12])     # Valor Fuerza 3
-        self.caja_413.setValue(dato_4[disp][0][13])     # Valor Fuerza 4
-        self.caja_414.setValue(dato_4[disp][0][14])     # Valor Fuerza 5
-        self.caja_415.setValue(dato_4[disp][0][15])     # % Intensidad 1
-        self.caja_416.setValue(dato_4[disp][0][16])     # % Intensidad 2
-        self.caja_417.setValue(dato_4[disp][0][17])     # % Intensidad 3
-        self.caja_418.setValue(dato_4[disp][0][18])     # % Intensidad 4
-        self.caja_419.setValue(dato_4[disp][0][19])     # % Intensidad 5
-        self.caja_420.setValue(dato_4[disp][0][20])     # Valor Intensidad 1
-        self.caja_421.setValue(dato_4[disp][0][21])     # Valor Intensidad 2
-        self.caja_422.setValue(dato_4[disp][0][22])     # Valor Intensidad 3
-        self.caja_423.setValue(dato_4[disp][0][23])     # Valor Intensidad 4
-        self.caja_424.setValue(dato_4[disp][0][24])     # Valor Intensidad 5
+        self.caja_400.setValue( int(dato_4[disp][0][0]) )
+        self.caja_401.setValue( int(dato_4[disp][0][1]) )
+        self.caja_402.setValue( int(dato_4[disp][0][2]) )
+        self.caja_403.setValue( int(dato_4[disp][0][3]) )
+        self.caja_404.setValue( int(dato_4[disp][0][4]) )
+        self.caja_405.setValue( int(dato_4[disp][0][5]) )       # % Fuerza 1
+        self.caja_406.setValue( int(dato_4[disp][0][6]) )       # % Fuerza 2
+        self.caja_407.setValue( int(dato_4[disp][0][7]) )       # % Fuerza 3
+        self.caja_408.setValue( int(dato_4[disp][0][8]) )       # % Fuerza 4
+        self.caja_409.setValue( int(dato_4[disp][0][9]) )       # % Fuerza 5
+        self.caja_410.setValue( int(dato_4[disp][0][10]) )      # Valor Fuerza 1
+        self.caja_411.setValue( int(dato_4[disp][0][11]) )      # Valor Fuerza 2
+        self.caja_412.setValue( int(dato_4[disp][0][12]) )      # Valor Fuerza 3
+        self.caja_413.setValue( int(dato_4[disp][0][13]) )      # Valor Fuerza 4
+        self.caja_414.setValue( int(dato_4[disp][0][14]) )      # Valor Fuerza 5
+        self.caja_415.setValue( int(dato_4[disp][0][15]) )      # % Intensidad 1
+        self.caja_416.setValue( int(dato_4[disp][0][16]) )      # % Intensidad 2
+        self.caja_417.setValue( int(dato_4[disp][0][17]) )      # % Intensidad 3
+        self.caja_418.setValue( int(dato_4[disp][0][18]) )      # % Intensidad 4
+        self.caja_419.setValue( int(dato_4[disp][0][19]) )      # % Intensidad 5
+        self.caja_420.setValue(dato_4[disp][0][20])             # Valor Intensidad 1
+        self.caja_421.setValue(dato_4[disp][0][21])             # Valor Intensidad 2
+        self.caja_422.setValue(dato_4[disp][0][22])             # Valor Intensidad 3
+        self.caja_423.setValue(dato_4[disp][0][23])             # Valor Intensidad 4
+        self.caja_424.setValue(dato_4[disp][0][24])             # Valor Intensidad 5
 
         self.bloqueoSignals(False)
         self.ocultar()
@@ -796,14 +796,16 @@ class Main(QMainWindow):
         if((caja.value() < extremoInferior) and (caja.value() != 0)):
             self.cambioColor(caja, 'red')
 
-            texto = 'El valor [' + str(caja.value()) + '] esta fuera de rango'
+            texto_1 = 'El valor [' + str(caja.value()) + '] esta por debajo del minimo.'
+            texto_2 = 'Revise la calibracion.'
+            texto = texto_1 + '\n' + texto_2
             QMessageBox.warning(
                 self,
                 'Error',
                 texto
             )
 
-            caja.setValue(extremoInferior)
+            #caja.setValue(extremoInferior)
             self.cambioColor(caja, 'white') 
 
     def cambioColor(self, caja, color):
