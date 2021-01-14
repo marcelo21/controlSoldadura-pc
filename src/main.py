@@ -1,6 +1,9 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QFileDialog
 from PyQt5 import uic, QtCore
 
+import pyqtgraph as pg
+from pyqtgraph import PlotWidget, plot
+
 import os
 import sys
 import datetime
@@ -31,6 +34,12 @@ class Main(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('main/guiMain.ui', self)
+
+        # SETEO GRAFICAS.
+        self.graphWidget_1.setBackground('w')
+        self.graphWidget_2.setBackground('w')
+        self.graphWidget_3.setBackground('w')
+        self.graphWidget_4.setBackground('w')
 
         # SETEO MATRIZ AL INICIO.
         self.seteoDicc()
@@ -197,9 +206,15 @@ class Main(QMainWindow):
         # LISTA DE ERRORES.
         self.actionErrores.triggered.connect(lambda: window_6.show())
 
+        # LLAMO A LOS GRAFICOS.
+        self.plotSold()
+        self.plotCalib()
+
     def PC_CS(self):
         """
         """        
+
+        self.preguntoValorExtremoCajas()
 
         pregunta = QMessageBox.question(self, 
                                         "Atencion", 
@@ -597,6 +612,9 @@ class Main(QMainWindow):
         cs['MONITOR'] = dato_3
         cs['CALIBRACION'] = dato_4
 
+        self.plotSold()
+        self.plotCalib()
+
     def seteoCajas(self):
         """
         Actualizo los valores de las cajas cuando CS -> PC, o cargo un archivo.
@@ -706,11 +724,11 @@ class Main(QMainWindow):
         disp = self.caja_1.value() - 1
         #prog = self.caja_2.value() - 1
 
-        FuerzaExtremoInferior = cs['CALIBRACION'][disp][0][10]
-        FuerzaExtremoSuperior = cs['CALIBRACION'][disp][0][14]
+        #FuerzaExtremoInferior = int(cs['CALIBRACION'][disp][0][10])
+        FuerzaExtremoSuperior = int(cs['CALIBRACION'][disp][0][14])
 
-        IntensidadExtremoInferior = cs['CALIBRACION'][disp][0][20]     
-        IntensidadExtremoSuperior = cs['CALIBRACION'][disp][0][24]       
+        #IntensidadExtremoInferior = int(cs['CALIBRACION'][disp][0][20])     
+        IntensidadExtremoSuperior = int(cs['CALIBRACION'][disp][0][24])       
 
         # --- EXTREMO SUPERIOR. 
 
@@ -719,8 +737,11 @@ class Main(QMainWindow):
         self.caja_107.setMaximum(IntensidadExtremoSuperior)
         self.caja_111.setMaximum(IntensidadExtremoSuperior)
 
-        self.caja_114.setMaximum(IntensidadExtremoSuperior)
-        self.caja_116.setMaximum(IntensidadExtremoSuperior)
+        #self.caja_114.setMaximum(IntensidadExtremoSuperior)
+        #self.caja_116.setMaximum(IntensidadExtremoSuperior)
+
+        self.caja_114.setMaximum( self.caja_107.value() )
+        self.caja_116.setMaximum( self.caja_107.value() )
 
         self.caja_118.setMaximum(FuerzaExtremoSuperior)
 
@@ -736,7 +757,24 @@ class Main(QMainWindow):
 
         # CALIBRACION.
         self.caja_402.setMaximum(FuerzaExtremoSuperior)
-        
+
+        self.bloqueoSignals(False)
+
+    def preguntoValorExtremoCajas(self):
+        """
+        """
+
+        self.bloqueoSignals(True)
+
+        disp = self.caja_1.value() - 1
+        #prog = self.caja_2.value() - 1
+
+        FuerzaExtremoInferior = int(cs['CALIBRACION'][disp][0][10])
+        #FuerzaExtremoSuperior = int(cs['CALIBRACION'][disp][0][14])
+
+        IntensidadExtremoInferior = int(cs['CALIBRACION'][disp][0][20])     
+        #IntensidadExtremoSuperior = int(cs['CALIBRACION'][disp][0][24]) 
+
         # --- EXTREMO INFERIOR.
         
         caja = 0
@@ -1299,6 +1337,155 @@ class Main(QMainWindow):
         """
 
         pass
+
+    def plotSold(self):
+        """
+        """
+
+        disp = self.caja_1.value() - 1
+        prog = self.caja_2.value() - 1
+
+        #self.graphWidget_1.setXRange(0, 50)
+
+        vectorX = [
+            cs['SOLDADURA'][disp][prog][3],
+            cs['SOLDADURA'][disp][prog][13],
+            cs['SOLDADURA'][disp][prog][6],
+            cs['SOLDADURA'][disp][prog][15],
+            cs['SOLDADURA'][disp][prog][10]
+        ]
+
+        vectorY = [
+            cs['SOLDADURA'][disp][prog][4],
+            cs['SOLDADURA'][disp][prog][14],
+            cs['SOLDADURA'][disp][prog][7],
+            cs['SOLDADURA'][disp][prog][16],
+            cs['SOLDADURA'][disp][prog][11]
+        ]
+
+        vectorTime = [
+            cs['SOLDADURA'][disp][prog][5],
+            cs['SOLDADURA'][disp][prog][8],
+            cs['SOLDADURA'][disp][prog][12]
+        ]
+        
+        ant = 0
+        self.graphWidget_1.clear()
+        for i in range( len(vectorX) ):
+            
+            x = vectorX[i]
+            y = vectorY[i]
+              
+            if(vectorX[i] != 0):                  
+
+                if(i==0):
+                    # cuadrado inicial.
+                    X = [0, 0, ant + x, ant + x]
+                    Y = [0, y, y, 0]
+
+                elif(i==1):
+                    # rampa ascenso.    
+                    ant += vectorTime[0]            
+                    X = [ant, ant, ant + x, ant + x]    
+                    Y = [0, y, vectorY[2], 0]
+
+                elif(i==2):
+                    # cuadrado intermedio.
+                    if(vectorX[1]==0):
+                        ant += vectorTime[0]
+                    else:
+                        pass
+
+                    X = [ant, ant, ant + x, ant + x]
+                    Y = [0, y, y, 0]
+
+                elif(i==3):
+                    # rampa descenso.
+                    X = [ant, ant, ant + x, ant + x]
+                    Y = [0, vectorY[2], y, 0]
+                    
+                else:      
+                    # cuadrado final.
+                    if(vectorX[3]==0):
+                        ant += vectorTime[2]
+
+                    ant += vectorTime[2]
+                    X = [ant, ant, ant + x, ant + x]
+                    Y = [0, y, y, 0]
+                
+            else:
+                X = [0, 0, 0, 0]
+                Y = [0, 0, 0, 0]            
+
+            pen = pg.mkPen( color=(255, 0, 0), width=3 )
+            self.graphWidget_1.plot(X, Y, pen=pen)
+
+            ant += vectorX[i]
+
+    def plotService(self):
+        """
+        """
+
+        pass
+
+    def plotCalib(self):
+        """
+        """
+
+        disp = self.caja_1.value() - 1
+
+        X1 = [
+            cs['CALIBRACION'][disp][0][5],
+            cs['CALIBRACION'][disp][0][6],
+            cs['CALIBRACION'][disp][0][7],
+            cs['CALIBRACION'][disp][0][8],
+            cs['CALIBRACION'][disp][0][9]
+        ]
+
+        Y1 = [
+            cs['CALIBRACION'][disp][0][10],
+            cs['CALIBRACION'][disp][0][11],
+            cs['CALIBRACION'][disp][0][12],
+            cs['CALIBRACION'][disp][0][13],
+            cs['CALIBRACION'][disp][0][14]
+        ]
+
+        X2 = [
+            cs['CALIBRACION'][disp][0][15],
+            cs['CALIBRACION'][disp][0][16],
+            cs['CALIBRACION'][disp][0][17],
+            cs['CALIBRACION'][disp][0][18],
+            cs['CALIBRACION'][disp][0][19]
+        ]
+
+        Y2 = [
+            cs['CALIBRACION'][disp][0][20],
+            cs['CALIBRACION'][disp][0][21],
+            cs['CALIBRACION'][disp][0][22],
+            cs['CALIBRACION'][disp][0][23],
+            cs['CALIBRACION'][disp][0][24]
+        ]
+
+        pen_1 = pg.mkPen( color=(0, 0, 255), width=3 )
+        pen_2 = pg.mkPen( color=(255, 0, 0), width=3 )        
+
+        # Fuerza.
+        self.graphWidget_3.clear()
+
+        self.graphWidget_3.setXRange(0, max(X1) )
+        self.graphWidget_3.setYRange(0, max(Y1) )        
+        
+        self.graphWidget_3.plot(X1, Y1, pen=pen_1, symbol='o', symbolBrush=('b'))
+        self.graphWidget_3.showGrid(x=True, y=True)
+
+        # Corriente.
+        self.graphWidget_4.clear()
+
+        self.graphWidget_4.setXRange(0, max(X2) )
+        self.graphWidget_4.setYRange(0, max(Y2) )
+         
+        self.graphWidget_4.plot(X2, Y2, pen=pen_2, symbol='o', symbolBrush=('r'))        
+        self.graphWidget_4.showGrid(x=True, y=True)
 
 
 if __name__ == '__main__':

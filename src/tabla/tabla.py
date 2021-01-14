@@ -31,9 +31,9 @@ class Tabla(QDialog):
         if(self.table_100.rowCount() > 1):
 
             programa = self.table_100.cellWidget(fila, 0).value()
-            dispositivo = int(self.table_100.cellWidget(fila, 1).currentText())
+            #dispositivo = int(self.table_100.cellWidget(fila, 1).currentText())
 
-            texto = '¿Quiere borrar el programa [' + str(programa) + '] de la Tabla?'
+            texto = '¿Quiere borrar el programa [' + str(programa) + '] - fila [' + str(fila+1) + '] de la Tabla?'
             pregunta = QMessageBox.question(
                 self, 
                 "Atencion", 
@@ -57,11 +57,13 @@ class Tabla(QDialog):
         """
         """
 
-        cantidad = int(self.combo_100.currentText())
-        for i in range(0, cantidad):
-            if(self.table_100.rowCount() < 255 ):
-                self.table_100.insertRow(i+1)
-                self.seteoCeldas(i+1, 1)
+        maxRowsInsert = int(self.combo_100.currentText())
+        rowCount = self.table_100.rowCount() - 1
+        for i in range(0, maxRowsInsert):
+            if( rowCount < 255 ):
+                number = rowCount + i + 1
+                self.table_100.insertRow(number)
+                self.seteoCeldas(number, 1)
 
     def seteoCeldas(self, fila, programa):
         """
