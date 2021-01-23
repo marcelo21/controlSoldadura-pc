@@ -1,11 +1,12 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QComboBox, QSpinBox, QLineEdit, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QComboBox, QSpinBox, QLineEdit, QMessageBox, QPushButton
 from PyQt5 import uic, QtGui, QtCore
 
 import sys
 
 #import numpy as np
 
-class Tabla(QDialog):
+#class Tabla(QDialog):
+class Tabla(QMainWindow):
     
     def __init__(self):
         super().__init__()
@@ -15,7 +16,19 @@ class Tabla(QDialog):
         self.btn_100.clicked.connect(self.agregarFilas)
         self.btn_101.clicked.connect(self.quitarFilas)
 
-        self.btn_102.clicked.connect(self.juntoFilas)
+        #self.btn_102.clicked.connect(self.juntoFilas)
+
+        # Timer.
+
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(50)
+        self.timer.timeout.connect(self.juntoFilas)
+
+        self.timer.start()
+
+        # Grilla.
+
+        self.createMap()
 
     def quitarFilas(self):
         """
@@ -57,7 +70,8 @@ class Tabla(QDialog):
         """
         """
 
-        maxRowsInsert = int(self.combo_100.currentText())
+        #maxRowsInsert = int(self.combo_100.currentText())
+        maxRowsInsert = int(self.caja_100.value())
         rowCount = self.table_100.rowCount() - 1
         for i in range(0, maxRowsInsert):
             if( rowCount < 255 ):
@@ -199,27 +213,50 @@ class Tabla(QDialog):
         
         bandera_1 = False
         filas_max = self.table_100.rowCount()
-        for i in range(0, filas_max):
+        function = [ self.table_100.cellWidget(i, 2) for i in range(0, filas_max) ]
 
-            Funcion = self.table_100.cellWidget(i, 2)    
-            #Funcion.removeItem(0)
-            #Funcion.addItems(["mi", "nombre"])
-            #print(Funcion.count())           
-             
-            if(Funcion.currentText() == "Inicio"):
+        countFin = 0
+        countInicio = 0
+        for i in range(0, filas_max):
+            if( function[i].currentText() == 'Inicio' ):
+                countInicio += 1
+            elif( function[i].currentText() == 'Fin' ):
+                countFin += 1
+            else:
+                pass
+
+        for i in range(0, filas_max):
+            if( function[i].currentText() == 'Inicio' ):
                 bandera_1 = True
 
-            elif(Funcion.currentText() == "Fin"):
+            elif( function[i].currentText() == 'Fin' ):
                 bandera_1 = False
 
             else:
-
                 if(bandera_1 == True):
-                    Funcion.setEnabled(False)
-                    Funcion.setCurrentIndex(2)  
+                    function[i].setEnabled(False)
+                    function[i].setCurrentIndex(2)
                 else:
-                    Funcion.setEnabled(True)
-                    Funcion.setCurrentIndex(0)
+                    function[i].setEnabled(True)
+                    function[i].setCurrentIndex(0)
+
+    def createMap(self):
+        """
+        """
+
+        btn = [ QPushButton( str(i+1) ) for i in range(0, 256) ]
+
+        prog = 0
+        for i in range(0, 16):
+            for j in range(0, 16):
+                
+                btn[prog].setFixedSize( QtCore.QSize(25, 25) )
+                self.gridLayout.addWidget( btn[prog], i, j )
+
+                if(prog != 0):
+                    btn[prog].setDisabled(True)
+
+                prog += 1
 
 if __name__ == '__main__':
     
