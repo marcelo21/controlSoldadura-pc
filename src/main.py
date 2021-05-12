@@ -1207,6 +1207,7 @@ class Main(QMainWindow):
         # SOLDADURA.
 
         cols_sold = [
+            'Programa',
             'Acercamiento',
             'Apriete',
             'Repeticion',
@@ -1250,10 +1251,11 @@ class Main(QMainWindow):
          
         df_sold = [0, 0, 0, 0, 0]
         for disp in range(0, 5):
-            aux = np.zeros( (cant_prog_disp[disp], 24) )
+            aux = np.zeros( (cant_prog_disp[disp], 25) )
             for i in range(0, cant_prog_disp[disp]):
                 prog = cs['PROG_LISTA'][i]
-                aux[i][:] = cs['SOLDADURA'][disp][prog]
+                aux[i][0] = prog
+                aux[i][1:] = cs['SOLDADURA'][disp][prog]
 
             df_sold[disp] = pd.DataFrame(aux, columns=cols_sold)
 
@@ -1322,13 +1324,15 @@ class Main(QMainWindow):
         start[3] = cant_prog_disp[0] + cant_prog_disp[1] + cant_prog_disp[2] + 3 + 3 + 3
         start[4] = cant_prog_disp[0] + cant_prog_disp[1] + cant_prog_disp[2] + cant_prog_disp[3] + 3 + 3 + 3 + 3
 
+        # Los "+3" le dan la separacion en el archivo excel :)
+
         with pd.ExcelWriter(direccion, engine='xlsxwriter') as writer:
 
             for disp in range(0, 5):
                 if disp + 1 in cs['DISP_LISTA']:
-                    df_sold[disp].to_excel(writer, sheet_name='PROGRAMACION', startrow = start[disp])
-                    df_serv[disp].to_excel(writer, sheet_name='SERVICIOS', startrow = start[disp])
-                    df_calib[disp].to_excel(writer, sheet_name='CALIBRACION', startrow = start[disp])
+                    df_sold[disp].to_excel(writer, sheet_name='PROGRAMACION', index=False, startrow = start[disp])
+                    df_serv[disp].to_excel(writer, sheet_name='SERVICIOS', index=False, startrow = start[disp])
+                    df_calib[disp].to_excel(writer, sheet_name='CALIBRACION', index=False, startrow = start[disp])
                 else:
                     pass
 

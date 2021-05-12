@@ -93,25 +93,25 @@ class PuertoSerie(QDialog):
 
         return valor_2
 
-    def calcularTensionOffset(self, offset, calibracion, dispActual):
-        """
-        """
+    #def calcularTensionOffset(self, offset, calibracion, dispActual):
+    #    """
+    #    """
 
-        valor_1 = self.conversorTension(calibracion[dispActual, 0, 5], calibracion, dispActual)
-        valor_2 = int(round(offset * valor_1 / calibracion[dispActual, 0, 10]))
+    #    valor_1 = self.conversorTension(calibracion[dispActual, 0, 5], calibracion, dispActual)
+    #    valor_2 = int(round(offset * valor_1 / calibracion[dispActual, 0, 10]))
 
-        return valor_2
+    #    return valor_2
 
-    def calcularPorcentajeOffset(self, offset, calibracion, dispActual):
-        """
-        """
+    #def calcularPorcentajeOffset(self, offset, calibracion, dispActual):
+    #    """
+    #    """
 
-        valor_1 = self.conversorPorcentaje(calibracion[dispActual, 0, 15], calibracion, dispActual)
-        valor_2 = int(round(offset * valor_1 / calibracion[dispActual, 0, 20]))
+    #    valor_1 = self.conversorPorcentaje(calibracion[dispActual, 0, 15], calibracion, dispActual)
+    #    valor_2 = int(round(offset * valor_1 / calibracion[dispActual, 0, 20]))
 
         #print("% CS offset:", valor_2)
 
-        return valor_2
+    #    return valor_2
 
     def borrarEeprom(self):
         """
@@ -635,6 +635,7 @@ class PuertoSerie(QDialog):
         self.enviar(0x0018 + D_INI_SOLD + D_POSC_MEM, dato_LSB)              # Fuerza.
 
         # 8 
+
         dato = int(cs['SOLDADURA'][dispActual][progActual][19])
         self.enviar(0x0019 + D_INI_SOLD + D_POSC_MEM, dato)                  # Tolerancia 1.
 
@@ -643,19 +644,22 @@ class PuertoSerie(QDialog):
 
         #################### PARAMETROS CONTROL.
 
-        dato = self.conversorPorcentaje(cs['SOLDADURA'][dispActual][progActual][4], cs['CALIBRACION'], dispActual)
+        #dato = self.conversorPorcentaje(cs['SOLDADURA'][dispActual][progActual][4], cs['CALIBRACION'], dispActual)
+        dato = self.conversorPorcentaje(cs['SOLDADURA'][dispActual][progActual][4] + cs['SOLDADURA'][dispActual][progActual][22], cs['CALIBRACION'], dispActual)
         dato_MSB = dato >> 8
         dato_LSB = dato & 0xFF
         self.enviar(0x001B + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Intensidad 1.
         self.enviar(0x001C + D_INI_SOLD + D_POSC_MEM, dato_LSB)              # Intensidad 1.
 
-        dato = self.conversorPorcentaje(cs['SOLDADURA'][dispActual][progActual][7], cs['CALIBRACION'], dispActual)
+        #dato = self.conversorPorcentaje(cs['SOLDADURA'][dispActual][progActual][7], cs['CALIBRACION'], dispActual)
+        dato = self.conversorPorcentaje(cs['SOLDADURA'][dispActual][progActual][7] + cs['SOLDADURA'][dispActual][progActual][22], cs['CALIBRACION'], dispActual)
         dato_MSB = dato >> 8
         dato_LSB = dato & 0xFF
         self.enviar(0x001D + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Intensidad 2.
         self.enviar(0x001E + D_INI_SOLD + D_POSC_MEM, dato_LSB)              # Intensidad 2.
 
-        dato = self.conversorPorcentaje(cs['SOLDADURA'][dispActual][progActual][11], cs['CALIBRACION'], dispActual)
+        #dato = self.conversorPorcentaje(cs['SOLDADURA'][dispActual][progActual][11], cs['CALIBRACION'], dispActual)
+        dato = self.conversorPorcentaje(cs['SOLDADURA'][dispActual][progActual][11] + cs['SOLDADURA'][dispActual][progActual][22], cs['CALIBRACION'], dispActual)
         dato_MSB = dato >> 8
         dato_LSB = dato & 0xFF
         self.enviar(0x001F + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Intensidad 3.
@@ -673,7 +677,8 @@ class PuertoSerie(QDialog):
         self.enviar(0x0023 + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Intensidad 5.
         self.enviar(0x0024 + D_INI_SOLD + D_POSC_MEM, dato_LSB)              # Intensidad 5.
 
-        dato = self.conversorTension(cs['SOLDADURA'][dispActual][progActual][18], cs['CALIBRACION'], dispActual)
+        #dato = self.conversorTension(cs['SOLDADURA'][dispActual][progActual][18], cs['CALIBRACION'], dispActual)
+        dato = self.conversorTension(cs['SOLDADURA'][dispActual][progActual][18] + cs['SOLDADURA'][dispActual][progActual][23], cs['CALIBRACION'], dispActual)
         dato_MSB = dato >> 8
         dato_LSB = dato & 0xFF
         self.enviar(0x0025 + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Fuerza.
@@ -696,17 +701,19 @@ class PuertoSerie(QDialog):
         self.enviar(0x002A + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Offset Fuerza usuario.
         self.enviar(0x002B + D_INI_SOLD + D_POSC_MEM, dato_LSB) 
 
-        dato = self.calcularPorcentajeOffset(cs['SOLDADURA'][dispActual][progActual][22], cs['CALIBRACION'], dispActual)
-        dato_MSB = dato >> 8
-        dato_LSB = dato & 0xFF
-        self.enviar(0x002C + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Offset Intensidad control soldadura.
-        self.enviar(0x002D + D_INI_SOLD + D_POSC_MEM, dato_LSB)     
+        # 0x002C, 0x002D, 0x002E, 0x002F queda libres.
 
-        dato = self.calcularTensionOffset(cs['SOLDADURA'][dispActual][progActual][23], cs['CALIBRACION'], dispActual)
-        dato_MSB = dato >> 8
-        dato_LSB = dato & 0xFF
-        self.enviar(0x002E + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Offset Fuerza control soldadura.
-        self.enviar(0x002F + D_INI_SOLD + D_POSC_MEM, dato_LSB) 
+        #dato = self.calcularPorcentajeOffset(cs['SOLDADURA'][dispActual][progActual][22], cs['CALIBRACION'], dispActual)
+        #dato_MSB = dato >> 8
+        #dato_LSB = dato & 0xFF
+        #self.enviar(0x002C + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Offset Intensidad control soldadura.
+        #self.enviar(0x002D + D_INI_SOLD + D_POSC_MEM, dato_LSB)     
+
+        #dato = self.calcularTensionOffset(cs['SOLDADURA'][dispActual][progActual][23], cs['CALIBRACION'], dispActual)
+        #dato_MSB = dato >> 8
+        #dato_LSB = dato & 0xFF
+        #self.enviar(0x002E + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Offset Fuerza control soldadura.
+        #self.enviar(0x002F + D_INI_SOLD + D_POSC_MEM, dato_LSB) 
 
     def recibirDatosConfiguracion(self, cs):
         """

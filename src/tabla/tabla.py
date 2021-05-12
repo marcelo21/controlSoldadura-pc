@@ -5,12 +5,13 @@ import sys
 
 #import numpy as np
 
-#class Tabla(QDialog):
-class Tabla(QMainWindow):
+class Tabla(QDialog):
+#class Tabla(QMainWindow):
     
     def __init__(self):
         super().__init__()
-        uic.loadUi('tabla/guiTabla.ui', self)
+        uic.loadUi('tabla/guiTabla-viejo.ui', self)
+        #uic.loadUi('tabla/guiTabla-nuevo.ui', self)
 
         self.seteoCeldas(0, 1)
         self.btn_100.clicked.connect(self.agregarFilas)
@@ -28,7 +29,7 @@ class Tabla(QMainWindow):
 
         # Grilla.
 
-        self.createMap()
+        #self.createMap()
 
     def quitarFilas(self):
         """
@@ -70,8 +71,8 @@ class Tabla(QMainWindow):
         """
         """
 
-        #maxRowsInsert = int(self.combo_100.currentText())
-        maxRowsInsert = int(self.caja_100.value())
+        maxRowsInsert = int(self.combo_100.currentText())
+        #maxRowsInsert = int(self.caja_100.value())
         rowCount = self.table_100.rowCount() - 1
         for i in range(0, maxRowsInsert):
             if( rowCount < 255 ):
