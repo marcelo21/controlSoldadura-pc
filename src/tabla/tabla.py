@@ -5,19 +5,17 @@ import sys
 
 #import numpy as np
 
-class Tabla(QDialog):
-#class Tabla(QMainWindow):
+class Tabla(QDialog):       # guiTabla-viejo.ui
+#class Tabla(QMainWindow):  # guiTabla-nuevo.ui
     
     def __init__(self):
         super().__init__()
-        uic.loadUi('tabla/guiTabla-viejo.ui', self)
-        #uic.loadUi('tabla/guiTabla-nuevo.ui', self)
+        uic.loadUi('tabla/guiTabla-viejo.ui', self)     # guiTabla-viejo.ui
+        #uic.loadUi('tabla/guiTabla-nuevo.ui', self)    # guiTabla-nuevo.ui
 
         self.seteoCeldas(0, 1)
         self.btn_100.clicked.connect(self.agregarFilas)
         self.btn_101.clicked.connect(self.quitarFilas)
-
-        #self.btn_102.clicked.connect(self.juntoFilas)
 
         # Timer.
 
@@ -29,7 +27,7 @@ class Tabla(QDialog):
 
         # Grilla.
 
-        #self.createMap()
+        #self.createMap()                                # guiTabla-nuevo.ui
 
     def quitarFilas(self):
         """
@@ -71,8 +69,8 @@ class Tabla(QDialog):
         """
         """
 
-        maxRowsInsert = int(self.combo_100.currentText())
-        #maxRowsInsert = int(self.caja_100.value())
+        maxRowsInsert = int(self.combo_100.currentText())   # guiTabla-viejo.ui
+        #maxRowsInsert = int(self.caja_100.value())         # guiTabla-nuevo.ui
         rowCount = self.table_100.rowCount() - 1
         for i in range(0, maxRowsInsert):
             if( rowCount < 255 ):
