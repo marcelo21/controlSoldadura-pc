@@ -684,11 +684,11 @@ class Main(QMainWindow):
         self.caja_402.setValue( int(dato_4[disp][0][2]) )
         self.caja_403.setValue( int(dato_4[disp][0][3]) )
         self.caja_404.setValue( int(dato_4[disp][0][4]) )
-        self.caja_405.setValue( int(dato_4[disp][0][5]) )       # % Fuerza 1
-        self.caja_406.setValue( int(dato_4[disp][0][6]) )       # % Fuerza 2
-        self.caja_407.setValue( int(dato_4[disp][0][7]) )       # % Fuerza 3
-        self.caja_408.setValue( int(dato_4[disp][0][8]) )       # % Fuerza 4
-        self.caja_409.setValue( int(dato_4[disp][0][9]) )       # % Fuerza 5
+        self.caja_405.setValue(dato_4[disp][0][5])              # % Fuerza 1
+        self.caja_406.setValue(dato_4[disp][0][6])              # % Fuerza 2
+        self.caja_407.setValue(dato_4[disp][0][7])              # % Fuerza 3
+        self.caja_408.setValue(dato_4[disp][0][8])              # % Fuerza 4
+        self.caja_409.setValue(dato_4[disp][0][9])              # % Fuerza 5
         self.caja_410.setValue( int(dato_4[disp][0][10]) )      # Valor Fuerza 1
         self.caja_411.setValue( int(dato_4[disp][0][11]) )      # Valor Fuerza 2
         self.caja_412.setValue( int(dato_4[disp][0][12]) )      # Valor Fuerza 3
