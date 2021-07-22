@@ -10,6 +10,7 @@ import datetime
 
 import numpy as np
 import pandas as pd
+#import pyqtgraph
 
 from asistente.asistente import Asistente
 from configuracion.configuracion import Configuracion
@@ -186,11 +187,11 @@ class Main(QMainWindow):
         self.btn_403.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_408.value()) )
         self.btn_404.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_409.value()) )
 
-        self.btn_405.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_415.value()) )
-        self.btn_406.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_416.value()) )
-        self.btn_407.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_417.value()) )
-        self.btn_408.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_418.value()) )
-        self.btn_409.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_419.value()) )
+        self.btn_405.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_415.value(), 1) )
+        self.btn_406.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_416.value(), 2) )
+        self.btn_407.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_417.value(), 3) )
+        self.btn_408.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_418.value(), 4) )
+        self.btn_409.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_419.value(), 5) )
 
         # MONITOR.        
         self.actionFuerzaa.triggered.connect( lambda: self.monitor("Fuerza") )
@@ -207,6 +208,7 @@ class Main(QMainWindow):
         self.actionErrores.triggered.connect(lambda: window_6.show())
 
         # LLAMO A LOS GRAFICOS.
+        self.configPlots()
         self.plotSold()
         self.plotCalib()
 
@@ -357,7 +359,7 @@ class Main(QMainWindow):
         
         self.seteoCajas()
 
-    def medirCalibracion(self, modo, dato):
+    def medirCalibracion(self, modo, dato, medicion):
         """
         """
 
@@ -390,6 +392,8 @@ class Main(QMainWindow):
 
                 else:
                     pass
+
+                puerto.enviarMedicionActual(dispActual, medicion)
 
                 puerto.confPuerto(selecPort, "CLOSE")   
                 puerto.hide()
@@ -1342,6 +1346,12 @@ class Main(QMainWindow):
 
         pass
 
+    def configPlots(self):
+        """
+        """
+        
+        pg.setConfigOptions(antialias=True, useOpenGL=True)
+
     def plotSold(self):
         """
         """
@@ -1434,7 +1444,7 @@ class Main(QMainWindow):
 
     def plotCalib(self):
         """
-        """
+        """     
 
         disp = self.caja_1.value() - 1
 
@@ -1488,8 +1498,51 @@ class Main(QMainWindow):
         self.graphWidget_4.setXRange(0, max(X2) )
         self.graphWidget_4.setYRange(0, max(Y2) )
          
-        self.graphWidget_4.plot(X2, Y2, pen=pen_2, symbol='o', symbolBrush=('r'))        
+        self.graphWidget_4.plot(X2, Y2, pen=pen_2, symbol='o', symbolBrush=('r'))
         self.graphWidget_4.showGrid(x=True, y=True)
+
+        # Fill Corriente.
+
+        X_SUP = [
+            cs['CALIBRACION'][disp][0][15],
+            cs['CALIBRACION'][disp][0][16],
+            cs['CALIBRACION'][disp][0][17],
+            cs['CALIBRACION'][disp][0][18],
+            cs['CALIBRACION'][disp][0][19]
+        ]
+
+        Y_SUP = [
+            cs['CALIBRACION'][disp][0][20] * 1.20,
+            cs['CALIBRACION'][disp][0][21] * 1.20,
+            cs['CALIBRACION'][disp][0][22] * 1.20,
+            cs['CALIBRACION'][disp][0][23] * 1.20,
+            cs['CALIBRACION'][disp][0][24] * 1.20
+        ]
+
+        X_INF = [
+            cs['CALIBRACION'][disp][0][15],
+            cs['CALIBRACION'][disp][0][16],
+            cs['CALIBRACION'][disp][0][17],
+            cs['CALIBRACION'][disp][0][18],
+            cs['CALIBRACION'][disp][0][19]
+        ]
+
+        Y_INF = [
+            cs['CALIBRACION'][disp][0][20] * 0.80,
+            cs['CALIBRACION'][disp][0][21] * 0.80,
+            cs['CALIBRACION'][disp][0][22] * 0.80,
+            cs['CALIBRACION'][disp][0][23] * 0.80,
+            cs['CALIBRACION'][disp][0][24] * 0.80
+        ]
+
+        brush = (230, 140, 120, 50)
+        plotHigh = pg.PlotCurveItem(X_SUP, Y_SUP, brush=brush)
+        plotLow = pg.PlotCurveItem(X_INF, Y_INF, brush=brush)
+        plotFill = pg.FillBetweenItem(plotHigh, plotLow, brush=brush)
+
+        self.graphWidget_4.addItem(plotHigh)
+        self.graphWidget_4.addItem(plotLow)
+        self.graphWidget_4.addItem(plotFill)
 
 
 if __name__ == '__main__':

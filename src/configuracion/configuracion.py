@@ -36,9 +36,9 @@ class Configuracion(QDialog):
             incremento = False
 
         if self.r_btn_102.isChecked():
-            pulsador = True
+            medicion = True
         else:
-            pulsador = False
+            medicion = False
 
         if self.r_btn_104.isChecked():
             soldadura = 10
@@ -50,7 +50,7 @@ class Configuracion(QDialog):
         else:
             regulacion = False
 
-        valor_0  = pulsador
+        valor_0  = medicion
         valor_1  = regulacion
         valor_2  = 0
         valor_3  = 0
@@ -83,7 +83,7 @@ class Configuracion(QDialog):
         finCiclo = int(cs['CONFIGURACION'][0][0][2])
         valor = int(cs['CONFIGURACION'][0][0][3])
 
-        valor_0  = (valor >> 0)  & 1 # Pulsador 
+        valor_0  = (valor >> 0)  & 1 # Medicion
         valor_1  = (valor >> 1)  & 1 # Regulacion
         valor_2  = (valor >> 2)  & 1 # 
         valor_3  = (valor >> 3)  & 1 # 
@@ -115,6 +115,20 @@ class Configuracion(QDialog):
         else:
             self.r_btn_104.setChecked(False)
             self.r_btn_105.setChecked(True)
+
+        if valor_0 == True:
+            self.r_btn_102.setChecked(True)
+            self.r_btn_103.setChecked(False)
+        else:
+            self.r_btn_102.setChecked(False)
+            self.r_btn_103.setChecked(True)
+
+        if valor_1 == True:
+            self.r_btn_106.setChecked(True)
+            self.r_btn_107.setChecked(False)
+        else:
+            self.r_btn_106.setChecked(False)
+            self.r_btn_107.setChecked(True)
 
 
 class ListaErrores(QDialog):

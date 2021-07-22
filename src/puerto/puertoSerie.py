@@ -435,6 +435,15 @@ class PuertoSerie(QDialog):
         #self.enviar(0x0033 + D_INI_CALI + D_POSC_MEM, dato_MSB)          # aux intensidad.
         #self.enviar(0x0034 + D_INI_CALI + D_POSC_MEM, dato_LSB)          # aux intensidad.  
 
+    def enviarMedicionActual(self, dispActual, numero):
+        """
+        """
+
+        D_INI_CALI = 0x0050
+        D_POSC_MEM = ( 0x4020 * dispActual )
+        
+        self.enviar(0x0024 + D_INI_CALI, numero)
+
     def enviarDatosServicios(self, cs, dispActual):
         """
         """
