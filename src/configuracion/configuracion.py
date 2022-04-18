@@ -54,8 +54,8 @@ class Configuracion(QDialog):
         valor_1  = regulacion
         valor_2  = 0
         valor_3  = 0
-        valor_4  = 0
-        valor_5  = 0
+        valor_4  = 0            
+        valor_5  = 0         
         valor_6  = 0
         valor_7  = 0
         valor_8  = 0

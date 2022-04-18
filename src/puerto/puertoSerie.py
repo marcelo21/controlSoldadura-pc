@@ -1,9 +1,11 @@
+from socket import timeout
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
 from PyQt5 import uic, QtCore
 
 import sys
 
 import numpy as np
+from pexpect import TIMEOUT
 
 import serial
 
@@ -84,14 +86,33 @@ class PuertoSerie(QDialog):
             valor_2 = 0
 
         valor_2 = int(round(valor_2))
-
-        #print(x)
-        #print(y)
-        #print("Intensidad:", intensidad)
-        #print("Porcentaje:", valor_1)
-        #print("% CS:", valor_2)
-
         return valor_2
+
+    def conversorMiliVoltios(self, intensidad, calibracion, adc, dispActual):
+        """
+        Intensidad -> miliVoltios.
+        """
+
+        x = calibracion[dispActual, 0, 20:24 + 1]
+        y = adc[dispActual, 0, :]
+
+        print(x)
+        print(y)
+
+        if(intensidad > 0):
+            valor_1 = 0
+            #valor_1 = np.interp(intensidad, y, x)
+            valor_1 = np.interp(intensidad, x, y)
+
+        else:
+            valor_1 = 0
+
+        valor_1 = int(round(valor_1))
+
+        print('Intensidad: ', intensidad)
+        print('Valor_1: ', valor_1)
+
+        return valor_1
 
     #def calcularTensionOffset(self, offset, calibracion, dispActual):
     #    """
@@ -435,14 +456,43 @@ class PuertoSerie(QDialog):
         #self.enviar(0x0033 + D_INI_CALI + D_POSC_MEM, dato_MSB)          # aux intensidad.
         #self.enviar(0x0034 + D_INI_CALI + D_POSC_MEM, dato_LSB)          # aux intensidad.  
 
-    def enviarMedicionActual(self, dispActual, numero):
+    def enviarDatosCalibracionADC(self, dispActual, numero_medicion, dato):
         """
         """
 
+        #D_INI_CALI = 0x0050
+        #D_POSC_MEM = ( 0x4020 * dispActual )        
+        #self.enviar(0x0024 + D_INI_CALI, numero)
+
         D_INI_CALI = 0x0050
         D_POSC_MEM = ( 0x4020 * dispActual )
+
+        dato = int( round(dato) )
+        dato_MSB = dato >> 8
+        dato_LSB = dato & 0xFF
         
-        self.enviar(0x0024 + D_INI_CALI, numero)
+        if(numero_medicion == 1):
+            self.enviar(0x0035 + D_INI_CALI + D_POSC_MEM, dato_MSB) # ADC Medicion 1.
+            self.enviar(0x0036 + D_INI_CALI + D_POSC_MEM, dato_LSB) # ADC Medicion 1. 
+
+        elif(numero_medicion == 2):
+            self.enviar(0x0037 + D_INI_CALI + D_POSC_MEM, dato_MSB) # ADC Medicion 2.
+            self.enviar(0x0038 + D_INI_CALI + D_POSC_MEM, dato_LSB) # ADC Medicion 2. 
+
+        elif(numero_medicion == 3):
+            self.enviar(0x0039 + D_INI_CALI + D_POSC_MEM, dato_MSB) # ADC Medicion 3.
+            self.enviar(0x003A + D_INI_CALI + D_POSC_MEM, dato_LSB) # ADC Medicion 3. 
+            
+        elif(numero_medicion == 4):
+            self.enviar(0x003B + D_INI_CALI + D_POSC_MEM, dato_MSB) # ADC Medicion 4.
+            self.enviar(0x003C + D_INI_CALI + D_POSC_MEM, dato_LSB) # ADC Medicion 4. 
+
+        elif(numero_medicion == 5):
+            self.enviar(0x003D + D_INI_CALI + D_POSC_MEM, dato_MSB) # ADC Medicion 5.
+            self.enviar(0x003E + D_INI_CALI + D_POSC_MEM, dato_LSB) # ADC Medicion 5. 
+
+        else:
+            pass
 
     def enviarDatosServicios(self, cs, dispActual):
         """
@@ -666,6 +716,7 @@ class PuertoSerie(QDialog):
         dato_LSB = dato & 0xFF
         self.enviar(0x001D + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Intensidad 2.
         self.enviar(0x001E + D_INI_SOLD + D_POSC_MEM, dato_LSB)              # Intensidad 2.
+        print(dato)
 
         #dato = self.conversorPorcentaje(cs['SOLDADURA'][dispActual][progActual][11], cs['CALIBRACION'], dispActual)
         dato = self.conversorPorcentaje(cs['SOLDADURA'][dispActual][progActual][11] + cs['SOLDADURA'][dispActual][progActual][22], cs['CALIBRACION'], dispActual)
@@ -723,6 +774,38 @@ class PuertoSerie(QDialog):
         #dato_LSB = dato & 0xFF
         #self.enviar(0x002E + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Offset Fuerza control soldadura.
         #self.enviar(0x002F + D_INI_SOLD + D_POSC_MEM, dato_LSB) 
+    
+    def enviarDatosSoldaduraADC(self, cs, adc, dispActual, progActual):
+        """
+        """
+
+        D_INI_SOLD = 0x00B0
+        D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
+        
+        dato = self.conversorMiliVoltios( cs['SOLDADURA'][dispActual][progActual][7], cs['CALIBRACION'], adc['CALIBRACION_I'], dispActual )
+        dato_MSB = dato >> 8
+        dato_LSB = dato & 0xFF
+        self.enviar(0x0030 + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Intensidad 2 en mV.
+        self.enviar(0x0031 + D_INI_SOLD + D_POSC_MEM, dato_LSB)              # Intensidad 2 en mV.
+
+        # faltan agregar los limites superior e inferior.        
+
+        dato_MAX_percent = cs['SOLDADURA'][dispActual][progActual][7] * ( 1 + ( cs['SOLDADURA'][dispActual][progActual][20] / 100 ) )
+        print(dato_MAX_percent)
+        dato = self.conversorMiliVoltios( dato_MAX_percent, cs['CALIBRACION'], adc['CALIBRACION_I'], dispActual )
+        dato_MSB = dato >> 8
+        dato_LSB = dato & 0xFF
+        self.enviar(0x002C + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Tolerancia superior en mV.
+        self.enviar(0x002D + D_INI_SOLD + D_POSC_MEM, dato_LSB)              # Tolerancia superior en mV.
+
+        dato_MIN_percent = cs['SOLDADURA'][dispActual][progActual][7] * ( 1 - ( cs['SOLDADURA'][dispActual][progActual][19] / 100 ) )
+        print(dato_MIN_percent)
+        dato = self.conversorMiliVoltios( dato_MIN_percent, cs['CALIBRACION'], adc['CALIBRACION_I'], dispActual )
+        dato_MSB = dato >> 8
+        dato_LSB = dato & 0xFF
+        self.enviar(0x002E + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Tolerancia inferior en mV.
+        self.enviar(0x002F + D_INI_SOLD + D_POSC_MEM, dato_LSB)              # Tolerancia inferior en mV.
+        
 
     def recibirDatosConfiguracion(self, cs):
         """
@@ -934,6 +1017,40 @@ class PuertoSerie(QDialog):
 
         return cs['CALIBRACION']
 
+    def recibirDatosCalibracionADC(self, adc, dispActual):
+        """
+        """
+
+        D_INI_CALI = 0x0050
+        D_POSC_MEM = ( 0x4020 * dispActual )
+
+        dato_MSB = self.recibir(0x0035 + D_INI_CALI + D_POSC_MEM)
+        dato_LSB = self.recibir(0x0036 + D_INI_CALI + D_POSC_MEM) 
+        dato = (dato_MSB << 8) + dato_LSB 
+        adc['CALIBRACION_I'][dispActual][0][0] = dato               # adc 1.
+
+        dato_MSB = self.recibir(0x0037 + D_INI_CALI + D_POSC_MEM)
+        dato_LSB = self.recibir(0x0038 + D_INI_CALI + D_POSC_MEM) 
+        dato = (dato_MSB << 8) + dato_LSB 
+        adc['CALIBRACION_I'][dispActual][0][1] = dato               # adc 2.
+
+        dato_MSB = self.recibir(0x0039 + D_INI_CALI + D_POSC_MEM)
+        dato_LSB = self.recibir(0x003A + D_INI_CALI + D_POSC_MEM) 
+        dato = (dato_MSB << 8) + dato_LSB 
+        adc['CALIBRACION_I'][dispActual][0][2] = dato               # adc 3.
+
+        dato_MSB = self.recibir(0x003B + D_INI_CALI + D_POSC_MEM)
+        dato_LSB = self.recibir(0x003C + D_INI_CALI + D_POSC_MEM) 
+        dato = (dato_MSB << 8) + dato_LSB 
+        adc['CALIBRACION_I'][dispActual][0][3] = dato               # adc 4.
+
+        dato_MSB = self.recibir(0x003D + D_INI_CALI + D_POSC_MEM)
+        dato_LSB = self.recibir(0x003E + D_INI_CALI + D_POSC_MEM) 
+        dato = (dato_MSB << 8) + dato_LSB 
+        adc['CALIBRACION_I'][dispActual][0][4] = dato               # adc 5.
+
+        return adc['CALIBRACION_I']
+
     def recibirDatosServicios(self, cs, dispActual):
         """
         """
@@ -1126,6 +1243,20 @@ class PuertoSerie(QDialog):
 
         return cs['SOLDADURA']
 
+    def recibirDatosSoldaduraADC(self, adc, dispActual, progActual):
+        """
+        """
+
+        D_INI_SOLD = 0x00B0
+        D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
+
+        dato_MSB = self.recibir(0x002A + D_INI_SOLD + D_POSC_MEM)     
+        dato_LSB = self.recibir(0x002B + D_INI_SOLD + D_POSC_MEM)     
+        dato = (dato_MSB << 8) + dato_LSB                
+        adc['SOLDADURA_I'][dispActual][progActual][0] = dato          # Soldadura 2 en mV.  
+
+        return adc['SOLDADURA_I']
+
     def medirFuerza(self, cs, dispActual, dato):
         """
         """
@@ -1141,11 +1272,7 @@ class PuertoSerie(QDialog):
         dato_MSB = dato >> 8
         dato_LSB = dato & 0xFF
         self.enviar(0x0031 + D_INI_CALI + D_POSC_MEM, dato_MSB) # aux fuerza.
-        self.enviar(0x0032 + D_INI_CALI + D_POSC_MEM, dato_LSB) # aux fuerza.         
-
-        print("Dato:", dato)
-        print("Dato_MSB:", dato_MSB)
-        print("Dato_LSB:", dato_LSB)
+        self.enviar(0x0032 + D_INI_CALI + D_POSC_MEM, dato_LSB) # aux fuerza. 
 
         dato = "E"                                              # CS hay que calibrar. 
         ser.write( bytes(dato.encode()) )                       # Envio bandera calibracion.
@@ -1226,9 +1353,11 @@ class PuertoSerie(QDialog):
 
         TIEMPO_CONEXION = 0.025                                 # Tiempo para habilitar la conexion.
         VELOCIDAD = 9600                                        # Velocidad del puerto.
+        TIMEOUT = 0.035
 
         if(estado == "OPEN"):
-            ser = serial.Serial(puerto, baudrate=VELOCIDAD)    # Configuro el puerto.
+            ser = serial.Serial(puerto, baudrate=VELOCIDAD, timeout=TIMEOUT)    # Configuro el puerto.
+            #ser = serial.Serial(puerto, baudrate=VELOCIDAD)    # Configuro el puerto.
             time.sleep(TIEMPO_CONEXION)                        # Retardo para establecer 
                                                                # la conexión serial.
             
@@ -1275,8 +1404,10 @@ class PuertoSerie(QDialog):
         
         print("DIRECCION = [", direccion, "] DATO = [", dato, "]")
 
-    def recibir(self, direccion):
+    def recibir(self, direccion, dato='A'):
         """
+        direccion = A: Son los datos almacenados en la eeprom.
+        direccion = B: Son los datos del (ADC).
         """
 
         global ser
@@ -1291,7 +1422,7 @@ class PuertoSerie(QDialog):
 
         direccion_MSB = str(direccion >> 8)
         direccion_LSB = str(direccion & 0xFF)
-        dato = "A"                                  # Le aviso al CS que hay que leer.
+        #dato = "A"                                  # Le aviso al CS que hay que leer. Supuestamente no tiene que ir.
 
         ser.write( bytes(direccion_MSB.encode()) )
         ser.write( bytes(flagMBS.encode()) )        # Direccion MSB.

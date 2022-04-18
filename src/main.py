@@ -20,15 +20,28 @@ from puerto.puertoSerie import PuertoSerie
 from configuracion.configuracion import ListaErrores
 
 cs = {
-    'CONFIGURACION': np.zeros((1, 1, 16)),
-    'MONITOR'      : np.zeros((1, 1, 6)),
-    'CALIBRACION'  : np.zeros((5, 1, 25)),
-    'SERVICIOS'    : np.zeros((5, 1, 12)),
-    'SOLDADURA'    : np.zeros((5, 255, 24)),    #Antes --- 'SOLDADURA' : np.zeros((5, 255, 22))
-    'PROG_LISTA'   : [1],
-    'DISP_LISTA'   : [1],
-    'ETIQUETA'     : [""]    
+    'CONFIGURACION' : np.zeros((1, 1, 16)),
+    'MONITOR'       : np.zeros((1, 1, 6)),
+    'CALIBRACION'   : np.zeros((5, 1, 25)),
+    'SERVICIOS'     : np.zeros((5, 1, 12)),
+    'SOLDADURA'     : np.zeros((5, 255, 24)),    #Antes --- 'SOLDADURA' : np.zeros((5, 255, 22))
+    'PROG_LISTA'    : [1],
+    'DISP_LISTA'    : [1],
+    'ETIQUETA'      : [""]    
 }
+
+adc = {
+    'SOLDADURA_V'   : np.zeros((5, 255, 1)),
+    'SOLDADURA_I'   : np.zeros((5, 255, 1)),
+    'CALIBRACION_V' : np.zeros((5, 1, 5)),
+    'CALIBRACION_I' : np.zeros((5, 1, 5))
+}
+
+# adc['CALIBRACION_I'][0][0][0] = 110 # 20
+# adc['CALIBRACION_I'][0][0][1] = 220 # 30
+# adc['CALIBRACION_I'][0][0][2] = 330 # 40
+# adc['CALIBRACION_I'][0][0][3] = 440 # 50
+# adc['CALIBRACION_I'][0][0][4] = 550 # 60
 
 class Main(QMainWindow):
     
@@ -181,11 +194,11 @@ class Main(QMainWindow):
         self.actionPC_CS.triggered.connect(self.PC_CS)
 
         # MEDIR.
-        self.btn_400.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_405.value()) )
-        self.btn_401.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_406.value()) )
-        self.btn_402.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_407.value()) )
-        self.btn_403.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_408.value()) )
-        self.btn_404.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_409.value()) )
+        self.btn_400.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_405.value(), 1) )
+        self.btn_401.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_406.value(), 2) )
+        self.btn_402.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_407.value(), 3) )
+        self.btn_403.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_408.value(), 4) )
+        self.btn_404.clicked.connect( lambda: self.medirCalibracion("Fuerza", self.caja_409.value(), 5) )
 
         self.btn_405.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_415.value(), 1) )
         self.btn_406.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_416.value(), 2) )
@@ -193,9 +206,12 @@ class Main(QMainWindow):
         self.btn_408.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_418.value(), 4) )
         self.btn_409.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_419.value(), 5) )
 
+        # self.btn_410.clicked.connect(self.pedirADC)
+
         # MONITOR.        
         self.actionFuerzaa.triggered.connect( lambda: self.monitor("Fuerza") )
-        self.actionIntensidad.triggered.connect( lambda: self.monitor("Intensidad") )
+        #self.actionIntensidad.triggered.connect( lambda: self.monitor("Intensidad") )
+        self.actionIntensidad.triggered.connect( lambda: self.medirCalibracionADC(1, 1) )   # funcion de test.
 
         # CARGAR y GUARDAR.
         self.actionGuardar_Como.triggered.connect(self.guardar)
@@ -258,6 +274,13 @@ class Main(QMainWindow):
                         puerto.enviarDatosCalibracion(cs, dispActual)
                         puerto.enviarDatosServicios(cs, dispActual)                   
                         puerto.enviarDatosSoldadura(cs, dispActual, progActual)
+                        
+                    if( cs['CONFIGURACION'][0][0][3] > 1 ):
+                        puerto.enviarDatosSoldaduraADC(cs, adc, dispActual, progActual)
+                        for i in range(1, 6):
+                            puerto.enviarDatosCalibracionADC(dispActual, i, adc['CALIBRACION_I'][0][0][i-1])
+                    else:
+                        pass
 
                     # puerto.enviarDatosCalibracion(cs, dispActual)
                     # puerto.enviarDatosServicios(cs, dispActual)                   
@@ -293,7 +316,7 @@ class Main(QMainWindow):
 
         else:
             #no se hace nada.
-            pass
+            pass  
 
     def CS_PC(self):
         """
@@ -338,6 +361,11 @@ class Main(QMainWindow):
                         cs['SERVICIOS'] = puerto.recibirDatosServicios(cs, dispActual)
                         cs['SOLDADURA'] = puerto.recibirDatosSoldadura(cs, dispActual, progActual)
 
+                    if( cs['CONFIGURACION'][0][0][3] > 0 ):
+                        adc['CALIBRACION_I'] = puerto.recibirDatosCalibracionADC(adc, dispActual)
+                    else:
+                        pass
+
                     # cs['CALIBRACION'] = puerto.recibirDatosCalibracion(cs, dispActual)
                     # cs['SERVICIOS'] = puerto.recibirDatosServicios(cs, dispActual)
                     # cs['SOLDADURA'] = puerto.recibirDatosSoldadura(cs, dispActual, progActual)
@@ -370,6 +398,7 @@ class Main(QMainWindow):
                                        )
 
         self.valorCajas()
+        self.pidoDatosConfiguracion()
 
         if pregunta == QMessageBox.Ok:
             #mando el diccionario. 
@@ -393,15 +422,27 @@ class Main(QMainWindow):
                 else:
                     pass
 
-                puerto.enviarMedicionActual(dispActual, medicion)
+                #puerto.enviarMedicionActual(dispActual, medicion)
 
                 puerto.confPuerto(selecPort, "CLOSE")   
                 puerto.hide()
+
+                # aqui se va a agregar la funcion bloqueante para pedir el ADC.
+                
+                if( cs['CONFIGURACION'][0][0][3] > 0 ):
+                    pregunta = QMessageBox.question(self, 
+                                    'Esperando los datos.', 
+                                    '¿Termino el ciclo de calibracion?'
+                                )                
+                    if(pregunta == QMessageBox.Yes): self.medirCalibracionADC(dispActual, medicion)
+                    else: print('Adios')
+                else:
+                    pass
             
             except:
                 puerto.hide()
                 mensaje = "El puerto [" + selecPort + "] no se reconoce."
-                QMessageBox.warning(self, "Alerta", mensaje)
+                QMessageBox.warning(self, "Alerta", mensaje)    
 
         elif pregunta == QMessageBox.Reset:
             #mando uno vacio.
@@ -409,7 +450,34 @@ class Main(QMainWindow):
 
         else:
             #no se hace nada.
-            pass     
+            pass
+
+    def medirCalibracionADC(self, dispActual, medicion):
+        """
+        """
+
+        cant = 40
+
+        puerto.show()
+        selecPort = window_3.seleccionarPuerto()
+        puerto.confPuerto(selecPort, "OPEN")        
+        y = [ puerto.recibir(i, 'B') for i in range(0, cant) ]
+        puerto.confPuerto(selecPort, "CLOSE")   
+        puerto.hide()
+
+        print(y)
+
+        y = [ i for i in y if i > 10 ]
+        x = round( np.mean(y) )
+
+        print(y)
+        print(x)
+
+        puerto.confPuerto(selecPort, "OPEN") 
+        puerto.enviarDatosCalibracionADC(dispActual, medicion, x)
+        puerto.confPuerto(selecPort, "CLOSE") 
+
+        adc['CALIBRACION_I'][dispActual][0][medicion-1] = x
 
     def monitor(self, modo):
         """
@@ -474,6 +542,12 @@ class Main(QMainWindow):
 
     def pidoDatosConfiguracion(self):
         """
+        El diccionario cs['CONFIGURACION'][0][0][3] guarda los estado en forma de
+        bits.
+
+        * 1: medicion = SI / regulacion = NO
+        * 2: medicion = NO / regulacion = SI
+        * 3: medicion = SI / regulacion = SI
         """
 
         valor = window_3.datosConfiguracion()
@@ -482,12 +556,12 @@ class Main(QMainWindow):
         prog = self.caja_2.value() 
 
         if self.caja_102.value() == 0:
-            cs['CONFIGURACION'][0][0][0] = valor[0]
+            cs['CONFIGURACION'][0][0][0] = valor[0] 
         else:
             cs['CONFIGURACION'][0][0][0] = 20
 
-        #cs['CONFIGURACION'][0][0][0] = valor[0]
-        cs['CONFIGURACION'][0][0][1] = valor[1]
+        #cs['CONFIGURACION'][0][0][0] = valor[0] 
+        cs['CONFIGURACION'][0][0][1] = valor[1] 
         cs['CONFIGURACION'][0][0][2] = valor[2]
         cs['CONFIGURACION'][0][0][3] = valor[3]
 
@@ -1567,5 +1641,7 @@ if __name__ == '__main__':
     window_2.buttonBox.accepted.connect(window_1.pidoDatosAsistente)
     window_4.buttonBox.accepted.connect(window_1.pidoDatosCopiar)
     window_5.buttonBox.accepted.connect(window_1.pidoDatosTabla)
+
+    #window_1.pedirADC()
 
     sys.exit(app.exec_())
