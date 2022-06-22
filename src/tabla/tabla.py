@@ -45,7 +45,8 @@ class Tabla(QDialog):       # guiTabla-viejo.ui
             programa = self.table_100.cellWidget(fila, 0).value()
             #dispositivo = int(self.table_100.cellWidget(fila, 1).currentText())
 
-            texto = '¿Quiere borrar el programa [' + str(programa) + '] - fila [' + str(fila+1) + '] de la Tabla?'
+            #texto = '¿Quiere borrar el programa [' + str(programa) + '] - fila [' + str(fila+1) + '] de la Tabla?'
+            texto = '¿Quiere borrar el programa [ ' + str(programa) + ' ] de la Tabla?'
             pregunta = QMessageBox.question(
                 self, 
                 "Atencion", 
@@ -69,20 +70,31 @@ class Tabla(QDialog):       # guiTabla-viejo.ui
         """
         """
 
+        MAX_PROGRAMS = 255
+
         maxRowsInsert = int(self.combo_100.currentText())   # guiTabla-viejo.ui
         #maxRowsInsert = int(self.caja_100.value())         # guiTabla-nuevo.ui
         rowCount = self.table_100.rowCount() - 1
-        for i in range(0, maxRowsInsert):
-            if( rowCount < 255 ):
+
+        if( rowCount < (MAX_PROGRAMS-rowCount) ):
+            for i in range(0, maxRowsInsert):
                 number = rowCount + i + 1
                 self.table_100.insertRow(number)
-                self.seteoCeldas(number, 1)
+                #self.seteoCeldas(number, 1)
+                self.seteoCeldas(number, number+1)
+
+        elif( rowCount > (MAX_PROGRAMS-rowCount) ):
+            for i in range(0, (MAX_PROGRAMS-rowCount) - 1 ):
+                number = rowCount + i + 1
+                self.table_100.insertRow(number)
+                #self.seteoCeldas(number, 1)
+                self.seteoCeldas(number, number+1)
 
     def seteoCeldas(self, fila, programa):
         """
         """
         
-        opciones_combobox = ["1", "2", "3", "4", "5"]
+        opciones_combobox = ["1", "2", "3", "4", "5", "6", "7", "8"]
         combo_1 = QComboBox()
         combo_1.addItems(opciones_combobox)
 
@@ -214,6 +226,7 @@ class Tabla(QDialog):       # guiTabla-viejo.ui
         filas_max = self.table_100.rowCount()
         function = [ self.table_100.cellWidget(i, 2) for i in range(0, filas_max) ]
 
+        # Cuenta la cantidad de "inicios" y "finales" que hay en la tabla
         countFin = 0
         countInicio = 0
         for i in range(0, filas_max):
@@ -224,6 +237,7 @@ class Tabla(QDialog):       # guiTabla-viejo.ui
             else:
                 pass
 
+        # Esta parte arma los bloques de programas.
         for i in range(0, filas_max):
             if( function[i].currentText() == 'Inicio' ):
                 bandera_1 = True
@@ -232,7 +246,7 @@ class Tabla(QDialog):       # guiTabla-viejo.ui
                 bandera_1 = False
 
             else:
-                if(bandera_1 == True):
+                if(bandera_1 == True and countInicio == countFin):
                     function[i].setEnabled(False)
                     function[i].setCurrentIndex(2)
                 else:

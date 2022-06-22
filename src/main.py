@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QFileDialog, QLineEdit
 from PyQt5 import uic, QtCore
+from nbformat import read
 
 import pyqtgraph as pg
 from pyqtgraph import PlotWidget, plot
@@ -10,6 +11,7 @@ import datetime
 
 import numpy as np
 import pandas as pd
+from sympy import primitive, symbols
 #import pyqtgraph
 
 from asistente.asistente import Asistente
@@ -19,22 +21,29 @@ from tabla.tabla import Tabla
 from puerto.puertoSerie import PuertoSerie
 from configuracion.configuracion import ListaErrores
 
+MAXDISP = 8
+MAXPROG = 255
+
 cs = {
     'CONFIGURACION' : np.zeros((1, 1, 16)),
     'MONITOR'       : np.zeros((1, 1, 6)),
-    'CALIBRACION'   : np.zeros((5, 1, 25)),
-    'SERVICIOS'     : np.zeros((5, 1, 12)),
-    'SOLDADURA'     : np.zeros((5, 255, 24)),    #Antes --- 'SOLDADURA' : np.zeros((5, 255, 22))
+    'CALIBRACION'   : np.zeros((MAXDISP, 1, 25)),
+    'SERVICIOS'     : np.zeros((MAXDISP, 1, 12)),
+    'SOLDADURA'     : np.zeros((MAXDISP, MAXPROG, 24)),    #Antes --- 'SOLDADURA' : np.zeros((5, 255, 22))
     'PROG_LISTA'    : [1],
     'DISP_LISTA'    : [1],
     'ETIQUETA'      : [""]    
 }
 
 adc = {
-    'SOLDADURA_V'   : np.zeros((5, 255, 1)),
-    'SOLDADURA_I'   : np.zeros((5, 255, 1)),
-    'CALIBRACION_V' : np.zeros((5, 1, 5)),
-    'CALIBRACION_I' : np.zeros((5, 1, 5))
+    'SOLDADURA_V'   : np.zeros((MAXDISP, MAXPROG, 1)),
+    'SOLDADURA_I'   : np.zeros((MAXDISP, MAXPROG, 1)),
+    'CALIBRACION_V' : np.zeros((MAXDISP, 1, 5)),
+    'CALIBRACION_I' : np.zeros((MAXDISP, 1, 5))
+}
+
+historic = {
+    'HIST_1': np.zeros((1,7))
 }
 
 # adc['CALIBRACION_I'][0][0][0] = 110 # 20
@@ -54,6 +63,7 @@ class Main(QMainWindow):
         self.graphWidget_2.setBackground('w')
         self.graphWidget_3.setBackground('w')
         self.graphWidget_4.setBackground('w')
+        self.graphWidget_5.setBackground('w')
 
         # SETEO MATRIZ AL INICIO.
         self.seteoDicc()
@@ -210,8 +220,9 @@ class Main(QMainWindow):
 
         # MONITOR.        
         self.actionFuerzaa.triggered.connect( lambda: self.monitor("Fuerza") )
-        #self.actionIntensidad.triggered.connect( lambda: self.monitor("Intensidad") )
-        self.actionIntensidad.triggered.connect( lambda: self.medirCalibracionADC(1, 1) )   # funcion de test.
+        self.actionIntensidad.triggered.connect( lambda: self.monitor("Intensidad") )
+        self.btn_500.clicked.connect( self.historicoSoldadura )
+
 
         # CARGAR y GUARDAR.
         self.actionGuardar_Como.triggered.connect(self.guardar)
@@ -227,6 +238,7 @@ class Main(QMainWindow):
         self.configPlots()
         self.plotSold()
         self.plotCalib()
+        self.plotHistoric()
 
     def PC_CS(self):
         """
@@ -266,6 +278,7 @@ class Main(QMainWindow):
                     if(window_3.combo_102.currentIndex() == 0):
                         puerto.enviarDatosServicios(cs, dispActual)  
                         puerto.enviarDatosSoldadura(cs, dispActual, progActual)
+                        puerto.enviarDatosSoldaduraDispositivo(dispActual, progActual)
 
                     elif(window_3.combo_102.currentIndex() == 1):
                         puerto.enviarDatosServicios(cs, dispActual)  
@@ -274,6 +287,7 @@ class Main(QMainWindow):
                         puerto.enviarDatosCalibracion(cs, dispActual)
                         puerto.enviarDatosServicios(cs, dispActual)                   
                         puerto.enviarDatosSoldadura(cs, dispActual, progActual)
+                        puerto.enviarDatosSoldaduraDispositivo(dispActual, progActual)
                         
                     if( cs['CONFIGURACION'][0][0][3] > 1 ):
                         puerto.enviarDatosSoldaduraADC(cs, adc, dispActual, progActual)
@@ -342,6 +356,12 @@ class Main(QMainWindow):
                 puerto.show()
                 selecPort = window_3.seleccionarPuerto()
                 puerto.confPuerto(selecPort, "OPEN")   
+
+                # Agregar la lectura de los 255 PROG para ver cuales estan disponibles.
+                # se puede hacer una funcion que se llame escaneo de memoria.
+                # si la cantidad maxima de filas de la tabla es == 1, ahi pregunto si quiero escanear la memoria.
+
+                #cs['DISP_LISTA'], cs['PROG_LISTA'] = puerto.recibirDatosSoldaduraDispositivo(cs, dispActual, progActual)       
 
                 cs['CONFIGURACION'] = puerto.recibirDatosConfiguracion(cs)
                 cs['MONITOR'] = puerto.recibirDatosMonitor(cs, dispActual)
@@ -420,24 +440,34 @@ class Main(QMainWindow):
                     puerto.medirIntensidad(cs, dispActual, dato)
 
                 else:
-                    pass
+                    pass                                  
 
-                #puerto.enviarMedicionActual(dispActual, medicion)
-
-                puerto.confPuerto(selecPort, "CLOSE")   
-                puerto.hide()
-
-                # aqui se va a agregar la funcion bloqueante para pedir el ADC.
+                # Version 1.
+                #puerto.confPuerto(selecPort, "CLOSE")   
+                #puerto.hide()
                 
-                if( cs['CONFIGURACION'][0][0][3] > 0 ):
+                #if(cs['CONFIGURACION'][0][0][3] > 0 and modo == "Intensidad"):
+                #    pregunta = QMessageBox.question(self, 
+                #                    'Esperando datos.', 
+                #                    '¿Termino el ciclo de calibracion?'
+                #                )                
+                #    if(pregunta == QMessageBox.Yes): self.medirCalibracionADC(dispActual, medicion)
+                #    else: print('Adios')
+                #else:
+                #    pass
+
+                # Version 2.
+                puerto.hide()
+                pregunta = 0
+                while(pregunta == 0 or pregunta == QMessageBox.No):                    
                     pregunta = QMessageBox.question(self, 
-                                    'Esperando los datos.', 
-                                    '¿Termino el ciclo de calibracion?'
-                                )                
-                    if(pregunta == QMessageBox.Yes): self.medirCalibracionADC(dispActual, medicion)
-                    else: print('Adios')
-                else:
-                    pass
+                        '¿Fin Calibracion?', 
+                        '¿Termino el ciclo de calibracion?'
+                    ) 
+
+                    if(pregunta == QMessageBox.Yes): 
+                        puerto.confPuerto(selecPort, "CLOSE")
+                        if(cs['CONFIGURACION'][0][0][3] > 0 and modo == "Intensidad"): self.medirCalibracionADC(dispActual, medicion)  
             
             except:
                 puerto.hide()
@@ -456,6 +486,7 @@ class Main(QMainWindow):
         """
         """
 
+        FILTER_1 = 10
         cant = 40
 
         puerto.show()
@@ -467,17 +498,55 @@ class Main(QMainWindow):
 
         print(y)
 
-        y = [ i for i in y if i > 10 ]
-        x = round( np.mean(y) )
+        # Filtro-1.
+        y = [ i for i in y if i > FILTER_1 ]
+        print(y)
+
+        # Filtro-2.
+        y_filter_1 = [ (y[i] + y[i-1] )/2 for i in range(0, len(y)) if i>0 ]
+        print(y_filter_1)
+
+        x = round( np.mean(y_filter_1) )
+        #x = round( np.mean(y) )
 
         print(y)
-        print(x)
+        print('Promedio 1:', x)
+        print('Promedio 2:', round( np.mean( y[2:] ) ) )
 
         puerto.confPuerto(selecPort, "OPEN") 
         puerto.enviarDatosCalibracionADC(dispActual, medicion, x)
         puerto.confPuerto(selecPort, "CLOSE") 
 
         adc['CALIBRACION_I'][dispActual][0][medicion-1] = x
+
+    def recibirADC(self):
+        """
+        """
+
+        FILTER_1 = 10
+        cant = 40
+
+        puerto.show()
+        selecPort = window_3.seleccionarPuerto()
+        puerto.confPuerto(selecPort, "OPEN")        
+        y = [ puerto.recibir(i, 'B') for i in range(0, cant) ]
+        puerto.confPuerto(selecPort, "CLOSE")   
+        puerto.hide()
+
+        print(y)
+
+        # Filtro-1.
+        y = [ i for i in y if i > FILTER_1 ]
+        print(y)
+
+        # Filtro-2.
+        y_filter_1 = [ round((y[i] + y[i-1] + y[i-2] )/3) for i in range(0, len(y)) if i>1 ]
+        print(y_filter_1)
+
+        x = round( np.mean(y_filter_1) )
+        
+        print('Promedio 1:', x)
+        print('Promedio 2:', round( np.mean( y[2:] ) ) )
 
     def monitor(self, modo):
         """
@@ -513,8 +582,21 @@ class Main(QMainWindow):
                 else:
                     pass
 
-                puerto.confPuerto(selecPort, "CLOSE")   
+                # Version 1.
+                #puerto.confPuerto(selecPort, "CLOSE")   
+                #puerto.hide()
+
+                # Version 2.
                 puerto.hide()
+                pregunta = 0
+                while(pregunta == 0 or pregunta == QMessageBox.No):                    
+                    pregunta = QMessageBox.question(self, 
+                        '¿Fin Calibracion?', 
+                        '¿Quiere finalizar el ciclo de monitor?'
+                    ) 
+
+                    if(pregunta == QMessageBox.Yes): 
+                        puerto.confPuerto(selecPort, "CLOSE")
             
             except:
                 puerto.hide()
@@ -632,7 +714,7 @@ class Main(QMainWindow):
 
         dato_1[disp][prog][19] = self.caja_121.value()  # Tolerancia 1.
         dato_1[disp][prog][20] = self.caja_122.value()  # Tolerancia 2.
-        # dato_1[disp][prog][21] = comportamiento
+        # dato_1[disp][prog][21] = comportamiento       # Comportamiento.
         dato_1[disp][prog][22] = self.caja_119.value()  # Offset Intensidad.
         dato_1[disp][prog][23] = self.caja_120.value()  # Offset Fuerza.
 
@@ -713,23 +795,23 @@ class Main(QMainWindow):
         self.caja_101.setValue( int( dato_1[disp][prog][1]) )
         self.caja_102.setValue( int( dato_1[disp][prog][2]) )
         self.caja_103.setValue( int( dato_1[disp][prog][3]) )
-        self.caja_104.setValue(dato_1[disp][prog][4])           # float
+        self.caja_104.setValue( dato_1[disp][prog][4] )         # float
         self.caja_105.setValue( int(dato_1[disp][prog][5]) )
         self.caja_106.setValue( int(dato_1[disp][prog][6]) )
-        self.caja_107.setValue(dato_1[disp][prog][7])           # float
+        self.caja_107.setValue( dato_1[disp][prog][7] )         # float
         self.caja_108.setValue( int(dato_1[disp][prog][8]) )
         self.caja_109.setValue( int(dato_1[disp][prog][9]) )
         self.caja_110.setValue( int(dato_1[disp][prog][10]) )
-        self.caja_111.setValue(dato_1[disp][prog][11])          # float
+        self.caja_111.setValue( dato_1[disp][prog][11] )        # float
         self.caja_112.setValue( int(dato_1[disp][prog][12]) )
         self.caja_113.setValue( int(dato_1[disp][prog][13]) )
-        self.caja_114.setValue(dato_1[disp][prog][14])          # float
+        self.caja_114.setValue( dato_1[disp][prog][14] )        # float
         self.caja_115.setValue( int(dato_1[disp][prog][15]) )
-        self.caja_116.setValue(dato_1[disp][prog][16])          # float
+        self.caja_116.setValue( dato_1[disp][prog][16] )        # float
         self.caja_117.setValue( int(dato_1[disp][prog][17]) )
         self.caja_118.setValue( int(dato_1[disp][prog][18]) )
 
-        self.caja_119.setValue(dato_1[disp][prog][22])          # Offset intensidad. float
+        self.caja_119.setValue( dato_1[disp][prog][22] )        # Offset intensidad. float
         self.caja_120.setValue( int(dato_1[disp][prog][23]) )   # Offset fuerza.
         self.caja_121.setValue( int(dato_1[disp][prog][19]) )   # Tolerancia 1.
         self.caja_122.setValue( int(dato_1[disp][prog][20]) )   # Tolerancia 2.
@@ -752,7 +834,7 @@ class Main(QMainWindow):
         self.caja_300.setValue( int(dato_3[0][0][0]) )
         self.caja_301.setValue( int(dato_3[0][0][1]) )
         self.caja_308.setValue( int(dato_3[0][0][2]) )
-        self.caja_309.setValue(dato_3[0][0][3])                 # float
+        self.caja_309.setValue( dato_3[0][0][3] )               # float
         self.caja_304.setValue( int(dato_3[0][0][4]) )
         self.caja_305.setValue( int(dato_3[0][0][5]) )
 
@@ -762,11 +844,11 @@ class Main(QMainWindow):
         self.caja_402.setValue( int(dato_4[disp][0][2]) )
         self.caja_403.setValue( int(dato_4[disp][0][3]) )
         self.caja_404.setValue( int(dato_4[disp][0][4]) )
-        self.caja_405.setValue(dato_4[disp][0][5])              # % Fuerza 1
-        self.caja_406.setValue(dato_4[disp][0][6])              # % Fuerza 2
-        self.caja_407.setValue(dato_4[disp][0][7])              # % Fuerza 3
-        self.caja_408.setValue(dato_4[disp][0][8])              # % Fuerza 4
-        self.caja_409.setValue(dato_4[disp][0][9])              # % Fuerza 5
+        self.caja_405.setValue( dato_4[disp][0][5] )            # % Fuerza 1
+        self.caja_406.setValue( dato_4[disp][0][6] )            # % Fuerza 2
+        self.caja_407.setValue( dato_4[disp][0][7] )            # % Fuerza 3
+        self.caja_408.setValue( dato_4[disp][0][8] )            # % Fuerza 4
+        self.caja_409.setValue( dato_4[disp][0][9] )            # % Fuerza 5
         self.caja_410.setValue( int(dato_4[disp][0][10]) )      # Valor Fuerza 1
         self.caja_411.setValue( int(dato_4[disp][0][11]) )      # Valor Fuerza 2
         self.caja_412.setValue( int(dato_4[disp][0][12]) )      # Valor Fuerza 3
@@ -777,14 +859,79 @@ class Main(QMainWindow):
         self.caja_417.setValue( int(dato_4[disp][0][17]) )      # % Intensidad 3
         self.caja_418.setValue( int(dato_4[disp][0][18]) )      # % Intensidad 4
         self.caja_419.setValue( int(dato_4[disp][0][19]) )      # % Intensidad 5
-        self.caja_420.setValue(dato_4[disp][0][20])             # Valor Intensidad 1
-        self.caja_421.setValue(dato_4[disp][0][21])             # Valor Intensidad 2
-        self.caja_422.setValue(dato_4[disp][0][22])             # Valor Intensidad 3
-        self.caja_423.setValue(dato_4[disp][0][23])             # Valor Intensidad 4
-        self.caja_424.setValue(dato_4[disp][0][24])             # Valor Intensidad 5
+        self.caja_420.setValue( dato_4[disp][0][20] )           # Valor Intensidad 1
+        self.caja_421.setValue( dato_4[disp][0][21] )           # Valor Intensidad 2
+        self.caja_422.setValue( dato_4[disp][0][22] )           # Valor Intensidad 3
+        self.caja_423.setValue( dato_4[disp][0][23] )           # Valor Intensidad 4
+        self.caja_424.setValue( dato_4[disp][0][24] )           # Valor Intensidad 5
 
         self.bloqueoSignals(False)
         self.ocultar()
+
+    def entradasSalidasMonitor(self):
+        """  
+        """
+
+        pass
+
+    def historicoSoldadura(self):
+        """  
+        """
+
+        global historic
+
+        X = [
+            [0, 0, 0, 0, 0, 0, 0]
+        ]
+        number = self.caja_500.value()  
+        
+        rows = self.table_1.rowCount()
+        columns = self.table_1.columnCount()
+        print( '- Row:', rows, '- Columns:', columns )
+
+        # Pido datos al CS.
+        selecPort = window_3.seleccionarPuerto()
+        
+        puerto.confPuerto(selecPort, "OPEN")
+        X = puerto.recibirDatosHistoricos(number)
+        puerto.confPuerto(selecPort, "CLOSE")   
+
+        """ X = [
+            [1, 1, 5, 5, 10, 10, 7],
+            [1, 1, 5, 4, 10, 10, 34],
+            [1, 1, 5, 5, 10, 10, 7],
+            [1, 1, 5, 5, 10, 10, 7],
+            [1, 1, 5, 5.5, 10, 10, 7],
+            [1, 1, 5, 5, 10, 10, 7],
+            [1, 1, 5, 5.1, 10, 10, 7],
+            [1, 1, 5, 5, 10, 10, 7],
+            [1, 1, 5, 4.9, 10, 10, 7],
+            [1, 1, 5, 5, 10, 10, 7],
+            [1, 1, 5, 5, 10, 10, 7],
+            [1, 1, 5, 5, 10, 10, 7]
+        ] """          
+
+        # Filtro los datos.
+        X = [ x for x in X if x[0] < 9 ]
+        
+        # Agrego los datos a la tabla.
+        for i in range(0, rows):
+            self.table_1.removeRow(0)
+
+        rows = len(X)
+        for i in range(0, rows):
+            self.table_1.insertRow(0)
+
+        rows = self.table_1.rowCount()
+        for j in range(0, rows):
+            for i in range(0, columns):
+                self.table_1.setCellWidget( j, i, QLineEdit( readOnly=True ) )
+                self.table_1.cellWidget(j, i).setAlignment(QtCore.Qt.AlignCenter)
+                self.table_1.cellWidget(j, i).setText( str( X[j][i] ) )
+
+        # Grafico los datos.
+        historic['HIST_1'] = X
+        self.plotHistoric()
 
     def seteoExtremoCajas(self):
         """
@@ -1617,6 +1764,30 @@ class Main(QMainWindow):
         self.graphWidget_4.addItem(plotHigh)
         self.graphWidget_4.addItem(plotLow)
         self.graphWidget_4.addItem(plotFill)
+
+    def plotHistoric(self):
+        """  
+        """
+
+        global historic
+
+        self.graphWidget_5.clear()
+
+        Y_1 = [ x[2] for x in historic['HIST_1'] ]
+        Y_2 = [ x[3] for x in historic['HIST_1'] ]
+
+        pen_1 = pg.mkPen( color=(0, 0, 0), width=1 )
+        pen_2 = pg.mkPen( color=(235, 152, 78), width=3 )
+
+        self.graphWidget_5.plot(Y_1[1:], pen=pen_1)
+        self.graphWidget_5.plot(Y_2[1:], pen=pen_2, symbol='o')
+
+        try:
+            yMin = min( Y_2[1:] ) * (1 - 0.15)
+            yMax = max( Y_2[1:] ) * (1 + 0.15)
+            self.graphWidget_5.setYRange( yMin, yMax )
+        except:
+            pass
 
 
 if __name__ == '__main__':

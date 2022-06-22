@@ -21,6 +21,43 @@ class PuertoSerie(QDialog):
         super().__init__()
         uic.loadUi('puerto/guiEspere.ui', self)
 
+    def PROGR_TO_POSMEM(self, dispActual, progActual):
+        """
+        """
+
+        # Version 1.
+        #return ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
+
+        # Version 2.
+        return ( 0x4020 + ( 0x0040 * progActual ) )
+
+    def DISP_TO_POSMEM(self, dispActual):
+        """
+        """
+
+        # Version 1.
+        #return ( 0x4020 * dispActual )
+
+        # Version 2.
+        if(dispActual == 1):
+            return 0x0000
+        elif(dispActual == 2):
+            return 0x40F0
+        elif(dispActual == 3):
+            return 0x4150
+        elif(dispActual == 4):
+            return 0x41B0
+        elif(dispActual == 5):
+            return 0x4210
+        elif(dispActual == 6):
+            return 0x4270
+        elif(dispActual == 7):
+            return 0x42D0
+        elif(dispActual == 8):
+            return 0x4330
+        else:
+            return 0x0000
+
     def conversorDuty(self, tension):
         """
         Tension -> Duty
@@ -96,12 +133,11 @@ class PuertoSerie(QDialog):
         x = calibracion[dispActual, 0, 20:24 + 1]
         y = adc[dispActual, 0, :]
 
-        print(x)
-        print(y)
+        x = [ x[0], x[-1] ]
+        y = [ y[0], y[-1] ]        
 
         if(intensidad > 0):
             valor_1 = 0
-            #valor_1 = np.interp(intensidad, y, x)
             valor_1 = np.interp(intensidad, x, y)
 
         else:
@@ -109,30 +145,12 @@ class PuertoSerie(QDialog):
 
         valor_1 = int(round(valor_1))
 
-        print('Intensidad: ', intensidad)
-        print('Valor_1: ', valor_1)
+        print('- X:', x, '- Y:', y)
+        print('- Intensidad: ', intensidad, '[KA]')
+        print('- Valor_1: ', valor_1, '[mV]')
+        print(' ')
 
         return valor_1
-
-    #def calcularTensionOffset(self, offset, calibracion, dispActual):
-    #    """
-    #    """
-
-    #    valor_1 = self.conversorTension(calibracion[dispActual, 0, 5], calibracion, dispActual)
-    #    valor_2 = int(round(offset * valor_1 / calibracion[dispActual, 0, 10]))
-
-    #    return valor_2
-
-    #def calcularPorcentajeOffset(self, offset, calibracion, dispActual):
-    #    """
-    #    """
-
-    #    valor_1 = self.conversorPorcentaje(calibracion[dispActual, 0, 15], calibracion, dispActual)
-    #    valor_2 = int(round(offset * valor_1 / calibracion[dispActual, 0, 20]))
-
-        #print("% CS offset:", valor_2)
-
-    #    return valor_2
 
     def borrarEeprom(self):
         """
@@ -152,27 +170,29 @@ class PuertoSerie(QDialog):
 
         D_INI_SOLD = 0x00B0
 
-        dato = 255
+        MAX_DISP = 1
+        MAX_PROG = 255        
 
+        dato = 255
         cont = 0
 
-        for i in range(1, 4):
+        for i in range(0, MAX_DISP):
 
             dispActual = i
+            for j in range(0, MAX_PROG):
 
-            for j in range(1, 255):
-
-                progActual = j
-                
+                progActual = j                
                 cont += 1
                 
-                D_POSC_MEM = ( ( 0x4020 * (dispActual - 0x0001) ) + ( 0x0040 * (progActual - 0x0001) ) )
+                D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
                 self.enviar(0x0027 + D_INI_SOLD + D_POSC_MEM, dato)                  # Comportamiento.
+                self.enviar(0x0032 + D_INI_SOLD + D_POSC_MEM, dato)                  # Dispositivo.
 
-                self.barraProgreso(100 * cont / 1275)
+                self.barraProgreso(100 * cont / (MAX_DISP*MAX_PROG) )
 
     def bloquearPrograma(self, dispositivo, programa):
         """
+        Se usaba en tabla.py pero ahora no ... F
         """
 
         self.barraProgreso( 1 )
@@ -275,7 +295,8 @@ class PuertoSerie(QDialog):
         self.barraProgreso(100 / 5 * 3)
 
         D_INI_CALI = 0x0050
-        D_POSC_MEM = ( 0x4020 * dispActual )
+        #D_POSC_MEM = ( 0x4020 * dispActual )
+        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
 
         #################### PARAMETROS USUARIOS.        
         
@@ -390,23 +411,7 @@ class PuertoSerie(QDialog):
         dato_MSB = dato >> 8
         dato_LSB = dato & 0xFF
         self.enviar(0x0021 + D_INI_CALI + D_POSC_MEM, dato_MSB)          # KA Intensidad 5.
-        self.enviar(0x0022 + D_INI_CALI + D_POSC_MEM, dato_LSB)          # KA Intensidad 5.     
-
-        # Offset Fuerza
-
-        #dato = int(cs['CALIBRACION'][dispActual][0][0])
-        #dato_MSB = dato >> 8
-        #dato_LSB = dato & 0xFF
-        #self.enviar(0x0023 + D_INI_CALI + D_POSC_MEM, dato_MSB)          # offset fuerza.
-        #self.enviar(0x0024 + D_INI_CALI + D_POSC_MEM, dato_LSB)          # offset fuerza.  
-
-        # Offset Intensidad   
-
-        #dato = int(cs['CALIBRACION'][dispActual][0][0])
-        #dato_MSB = dato >> 8
-        #dato_LSB = dato & 0xFF
-        #self.enviar(0x0025 + D_INI_CALI + D_POSC_MEM, dato_MSB)          # offset intensidad.
-        #self.enviar(0x0026 + D_INI_CALI + D_POSC_MEM, dato_LSB)          # offset intensidad.  
+        self.enviar(0x0022 + D_INI_CALI + D_POSC_MEM, dato_LSB)          # KA Intensidad 5. 
 
         #################### PARAMETROS CONTROL.
 
@@ -426,46 +431,15 @@ class PuertoSerie(QDialog):
         self.enviar(0x002B + D_INI_CALI + D_POSC_MEM, dato)         # Tiempo Sold.
 
         dato = cs['CALIBRACION'][dispActual][0][4] 
-        self.enviar(0x002C + D_INI_CALI + D_POSC_MEM, dato)         # Tiempo Mant.
-
-        # Transformar offset fuerza -> duty / offset intensidad -> porcentaje
-
-        #dato = int(cs['CALIBRACION'][dispActual][0][0])
-        #dato_MSB = dato >> 8
-        #dato_LSB = dato & 0xFF
-        #self.enviar(0x002D + D_INI_CALI + D_POSC_MEM, dato_MSB)          # offset fuerza.
-        #self.enviar(0x002E + D_INI_CALI + D_POSC_MEM, dato_LSB)          # offset fuerza.  
-
-        #dato = int(cs['CALIBRACION'][dispActual][0][0])
-        #dato_MSB = dato >> 8
-        #dato_LSB = dato & 0xFF
-        #self.enviar(0x002F + D_INI_CALI + D_POSC_MEM, dato_MSB)          # offset intensidad.
-        #self.enviar(0x0030 + D_INI_CALI + D_POSC_MEM, dato_LSB)          # offset intensidad.  
-
-        # Aux sirve para la funcion medirCalibracion.
-
-        #dato = self.conversorTension(cs['CALIBRACION'][dispActual][0][2], cs['CALIBRACION'], dispActual)
-        #dato_MSB = dato >> 8
-        #dato_LSB = dato & 0xFF
-        #self.enviar(0x0031 + D_INI_CALI + D_POSC_MEM, dato_MSB)          # aux fuerza.
-        #self.enviar(0x0032 + D_INI_CALI + D_POSC_MEM, dato_LSB)          # aux fuerza.  
-
-        #dato = self.conversorPorcentaje(cs['CALIBRACION'][dispActual][0][0], cs['CALIBRACION'], dispActual)
-        #dato_MSB = dato >> 8
-        #dato_LSB = dato & 0xFF
-        #self.enviar(0x0033 + D_INI_CALI + D_POSC_MEM, dato_MSB)          # aux intensidad.
-        #self.enviar(0x0034 + D_INI_CALI + D_POSC_MEM, dato_LSB)          # aux intensidad.  
+        self.enviar(0x002C + D_INI_CALI + D_POSC_MEM, dato)         # Tiempo Mant. 
 
     def enviarDatosCalibracionADC(self, dispActual, numero_medicion, dato):
         """
         """
 
-        #D_INI_CALI = 0x0050
-        #D_POSC_MEM = ( 0x4020 * dispActual )        
-        #self.enviar(0x0024 + D_INI_CALI, numero)
-
         D_INI_CALI = 0x0050
-        D_POSC_MEM = ( 0x4020 * dispActual )
+        #D_POSC_MEM = ( 0x4020 * dispActual )
+        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
 
         dato = int( round(dato) )
         dato_MSB = dato >> 8
@@ -501,7 +475,8 @@ class PuertoSerie(QDialog):
         self.barraProgreso(100 / 5 * 4)
 
         D_INI_SERV = 0x0090
-        D_POSC_MEM = ( 0x4020 * dispActual )
+        #D_POSC_MEM = ( 0x4020 * dispActual )
+        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
 
         #################### PARAMETROS USUARIOS.
 
@@ -600,7 +575,8 @@ class PuertoSerie(QDialog):
         print("- DISP:", dispActual + 1, "- PROG:", progActual + 1)
 
         D_INI_SOLD = 0x00B0
-        D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
+        #D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
+        D_POSC_MEM = self.PROGR_TO_POSMEM(dispActual, progActual)
 
         #################### PARAMETROS USUARIOS.
 
@@ -759,29 +735,17 @@ class PuertoSerie(QDialog):
         dato_MSB = dato >> 8
         dato_LSB = dato & 0xFF
         self.enviar(0x002A + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Offset Fuerza usuario.
-        self.enviar(0x002B + D_INI_SOLD + D_POSC_MEM, dato_LSB) 
-
-        # 0x002C, 0x002D, 0x002E, 0x002F queda libres.
-
-        #dato = self.calcularPorcentajeOffset(cs['SOLDADURA'][dispActual][progActual][22], cs['CALIBRACION'], dispActual)
-        #dato_MSB = dato >> 8
-        #dato_LSB = dato & 0xFF
-        #self.enviar(0x002C + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Offset Intensidad control soldadura.
-        #self.enviar(0x002D + D_INI_SOLD + D_POSC_MEM, dato_LSB)     
-
-        #dato = self.calcularTensionOffset(cs['SOLDADURA'][dispActual][progActual][23], cs['CALIBRACION'], dispActual)
-        #dato_MSB = dato >> 8
-        #dato_LSB = dato & 0xFF
-        #self.enviar(0x002E + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Offset Fuerza control soldadura.
-        #self.enviar(0x002F + D_INI_SOLD + D_POSC_MEM, dato_LSB) 
+        self.enviar(0x002B + D_INI_SOLD + D_POSC_MEM, dato_LSB)     
     
     def enviarDatosSoldaduraADC(self, cs, adc, dispActual, progActual):
         """
         """
 
         D_INI_SOLD = 0x00B0
-        D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
+        #D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
+        D_POSC_MEM = self.PROGR_TO_POSMEM(dispActual, progActual)
         
+        print('-'*50, 'Intensidad Soldadura.')
         dato = self.conversorMiliVoltios( cs['SOLDADURA'][dispActual][progActual][7], cs['CALIBRACION'], adc['CALIBRACION_I'], dispActual )
         dato_MSB = dato >> 8
         dato_LSB = dato & 0xFF
@@ -789,23 +753,32 @@ class PuertoSerie(QDialog):
         self.enviar(0x0031 + D_INI_SOLD + D_POSC_MEM, dato_LSB)              # Intensidad 2 en mV.
 
         # faltan agregar los limites superior e inferior.        
-
+        
+        print('-'*50, 'Tolerancia Superior.')
         dato_MAX_percent = cs['SOLDADURA'][dispActual][progActual][7] * ( 1 + ( cs['SOLDADURA'][dispActual][progActual][20] / 100 ) )
-        print(dato_MAX_percent)
         dato = self.conversorMiliVoltios( dato_MAX_percent, cs['CALIBRACION'], adc['CALIBRACION_I'], dispActual )
         dato_MSB = dato >> 8
         dato_LSB = dato & 0xFF
         self.enviar(0x002C + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Tolerancia superior en mV.
         self.enviar(0x002D + D_INI_SOLD + D_POSC_MEM, dato_LSB)              # Tolerancia superior en mV.
-
+        
+        print('-'*50, 'Tolerancia Inferior.')
         dato_MIN_percent = cs['SOLDADURA'][dispActual][progActual][7] * ( 1 - ( cs['SOLDADURA'][dispActual][progActual][19] / 100 ) )
-        print(dato_MIN_percent)
         dato = self.conversorMiliVoltios( dato_MIN_percent, cs['CALIBRACION'], adc['CALIBRACION_I'], dispActual )
         dato_MSB = dato >> 8
         dato_LSB = dato & 0xFF
         self.enviar(0x002E + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Tolerancia inferior en mV.
-        self.enviar(0x002F + D_INI_SOLD + D_POSC_MEM, dato_LSB)              # Tolerancia inferior en mV.
-        
+        self.enviar(0x002F + D_INI_SOLD + D_POSC_MEM, dato_LSB)              # Tolerancia inferior en mV.     
+
+    def enviarDatosSoldaduraDispositivo(self, dispActual, progActual):
+        """
+        """
+
+        D_INI_SOLD = 0x00B0
+        D_POSC_MEM = self.PROGR_TO_POSMEM(dispActual, progActual)
+
+        dato = int(dispActual)
+        self.enviar(0x0032 + D_INI_SOLD + D_POSC_MEM, dato)       
 
     def recibirDatosConfiguracion(self, cs):
         """
@@ -878,7 +851,8 @@ class PuertoSerie(QDialog):
         self.barraProgreso(100 / 5 * 3)
 
         D_INI_CALI = 0x0050
-        D_POSC_MEM = ( 0x4020 * dispActual )
+        #D_POSC_MEM = ( 0x4020 * dispActual )
+        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
 
         #################### PARAMETROS USUARIOS.        
         
@@ -980,22 +954,6 @@ class PuertoSerie(QDialog):
         dato = (dato_MSB << 8) + dato_LSB 
         cs['CALIBRACION'][dispActual][0][24] = dato / 100           # KA Intensidad 5.   
 
-        # Offset Fuerza
-
-        #dato = cs['CALIBRACION'][dispActual][0][0])
-        #dato_MSB = dato >> 8
-        #dato_LSB = dato & 0xFF
-        #self.recibir(0x0023 + D_INI_CALI + D_POSC_MEM, dato_MSB)          # offset fuerza.
-        #self.recibir(0x0024 + D_INI_CALI + D_POSC_MEM, dato_LSB)          # offset fuerza.  
-
-        # Offset Intensidad   
-
-        #dato = cs['CALIBRACION'][dispActual][0][0])
-        #dato_MSB = dato >> 8
-        #dato_LSB = dato & 0xFF
-        #self.recibir(0x0025 + D_INI_CALI + D_POSC_MEM, dato_MSB)          # offset intensidad.
-        #self.recibir(0x0026 + D_INI_CALI + D_POSC_MEM, dato_LSB)          # offset intensidad.  
-
         #################### PARAMETROS CONTROL.
 
         dato = self.recibir(0x0027 + D_INI_CALI + D_POSC_MEM)  
@@ -1022,7 +980,8 @@ class PuertoSerie(QDialog):
         """
 
         D_INI_CALI = 0x0050
-        D_POSC_MEM = ( 0x4020 * dispActual )
+        #D_POSC_MEM = ( 0x4020 * dispActual )
+        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
 
         dato_MSB = self.recibir(0x0035 + D_INI_CALI + D_POSC_MEM)
         dato_LSB = self.recibir(0x0036 + D_INI_CALI + D_POSC_MEM) 
@@ -1058,7 +1017,8 @@ class PuertoSerie(QDialog):
         self.barraProgreso(100 / 5 * 4)
 
         D_INI_SERV = 0x0090
-        D_POSC_MEM = ( 0x4020 * dispActual )
+        #D_POSC_MEM = ( 0x4020 * dispActual )
+        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
         
         dato_MSB = self.recibir(0x0000 + D_INI_SERV + D_POSC_MEM)          
         dato_LSB = self.recibir(0x0001 + D_INI_SERV + D_POSC_MEM)          
@@ -1133,7 +1093,8 @@ class PuertoSerie(QDialog):
         print("- DISP:", dispActual + 1, "- PROG:", progActual + 1)
 
         D_INI_SOLD = 0x00B0
-        D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
+        #D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
+        D_POSC_MEM = self.PROGR_TO_POSMEM(dispActual, progActual)
 
         # 1
 
@@ -1248,7 +1209,8 @@ class PuertoSerie(QDialog):
         """
 
         D_INI_SOLD = 0x00B0
-        D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
+        #D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
+        D_POSC_MEM = self.PROGR_TO_POSMEM(dispActual, progActual)
 
         dato_MSB = self.recibir(0x002A + D_INI_SOLD + D_POSC_MEM)     
         dato_LSB = self.recibir(0x002B + D_INI_SOLD + D_POSC_MEM)     
@@ -1257,6 +1219,83 @@ class PuertoSerie(QDialog):
 
         return adc['SOLDADURA_I']
 
+    def recibirDatosSoldaduraDispositivo(self, cs, dispActual, progActual):
+        """
+        """
+
+        cs['DISP_LISTA'] = []
+        cs['PROG_LISTA'] = []
+
+        D_INI_SOLD = 0x00B0
+        #D_POSC_MEM = self.PROGR_TO_POSMEM(dispActual, progActual)
+
+        dato = 0
+        for i in range(0, 255):
+
+            D_POSC_MEM = self.PROGR_TO_POSMEM(0, i)
+            dato = self.recibir(0x0032 + D_INI_SOLD + D_POSC_MEM)            
+
+            if( dato >= 1 and dato <= 8 ): 
+                cs['DISP_LISTA'].append(dato)
+                cs['PROG_LISTA'].append(i+1)
+
+        return cs['DISP_LISTA'], cs['PROG_LISTA']
+
+    def recibirDatosHistoricos(self, cant):
+        """  
+        MAX_HIST: es la cantidad maxima de historicos que se pueden acumular.
+        """
+
+        MAX_HIST = 200
+
+        D_INI_HISTORIAL = 0x4350
+        D_INI_CONF = 0x0000
+        CAMBIO = 0
+
+        array = np.zeros((cant, 7))
+
+        dato_MSB = self.recibir(0x003A + D_INI_CONF)  
+        dato_LSB = self.recibir(0x003B + D_INI_CONF)  
+        contador = (dato_MSB << 8) + dato_LSB
+
+        if(cant > contador):
+            CAMBIO = (contador - 1) * 0x0020
+        else:
+            CAMBIO = (contador - cant - 1) * 0x0020
+
+        for i in range(0, cant):
+            
+            disp_actual = self.recibir(0x0000 + D_INI_HISTORIAL + CAMBIO)                  
+            prog_actual = self.recibir(0x0001 + D_INI_HISTORIAL + CAMBIO)
+
+            dato_MSB = self.recibir(0x0002 + D_INI_HISTORIAL + CAMBIO)  
+            dato_LSB = self.recibir(0x0003 + D_INI_HISTORIAL + CAMBIO)  
+            i_programada = (dato_MSB << 8) + dato_LSB 
+
+            dato_MSB = self.recibir(0x0004 + D_INI_HISTORIAL + CAMBIO)  
+            dato_LSB = self.recibir(0x0005 + D_INI_HISTORIAL + CAMBIO)  
+            i_medida = (dato_MSB << 8) + dato_LSB 
+
+            ciclo_programado = self.recibir(0x0006 + D_INI_HISTORIAL + CAMBIO)  
+            ciclo_medido = self.recibir(0x0007 + D_INI_HISTORIAL + CAMBIO)
+
+            error = self.recibir(0x001F + D_INI_HISTORIAL + CAMBIO)
+
+            array[i][0] = disp_actual
+            array[i][1] = prog_actual
+            array[i][2] = i_programada / 100
+            array[i][3] = i_medida / 100
+            array[i][4] = ciclo_programado
+            array[i][5] = ciclo_medido
+            array[i][6] = error
+
+            CAMBIO += 0x0020
+
+        print(contador)
+        print(array)
+        
+        return array
+
     def medirFuerza(self, cs, dispActual, dato):
         """
         """
@@ -1264,7 +1303,8 @@ class PuertoSerie(QDialog):
         self.barraProgreso(100 / 5 * 3)
 
         D_INI_CALI = 0x0050
-        D_POSC_MEM = 0x4020 * dispActual
+        #D_POSC_MEM = 0x4020 * dispActual
+        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
 
         print("-Fuerza-")
         
@@ -1286,7 +1326,8 @@ class PuertoSerie(QDialog):
         self.barraProgreso(100 / 5 * 3)
 
         D_INI_CALI = 0x0050
-        D_POSC_MEM = 0x4020 * dispActual
+        #D_POSC_MEM = 0x4020 * dispActual
+        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
 
         # Fuerza.
 
@@ -1475,6 +1516,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     window = PuertoSerie()
-    window.show()
+    window.show() 
 
     sys.exit(app.exec_())
