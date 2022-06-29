@@ -1,3 +1,4 @@
+from ast import Pass
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QFileDialog, QLineEdit
 from PyQt5 import uic, QtCore
 from nbformat import read
@@ -220,9 +221,18 @@ class Main(QMainWindow):
 
         # MONITOR.        
         self.actionFuerzaa.triggered.connect( lambda: self.monitor("Fuerza") )
-        self.actionIntensidad.triggered.connect( lambda: self.monitor("Intensidad") )
-        self.btn_500.clicked.connect( self.historicoSoldadura )
+        #self.actionIntensidad.triggered.connect( lambda: self.monitor("Intensidad") )
+        self.actionIntensidad.triggered.connect( self.monitorEntradas )
 
+        # HISTORICO.
+        self.btn_500.clicked.connect(self.historicoSoldadura)
+        self.btn_502.clicked.connect(self.cambioLabelCaja)
+        self.caja_501.valueChanged.connect(self.plotHistoric)
+
+        #self.lbl_324.setStyleSheet('color: red')
+        #self.lbl_324.setStyleSheet('background-color: green')
+        #self.lbl_324.setStyleSheet('background-color: lightgreen')
+        #self.lbl_324.setStyleSheet('background-color: white')
 
         # CARGAR y GUARDAR.
         self.actionGuardar_Como.triggered.connect(self.guardar)
@@ -272,22 +282,25 @@ class Main(QMainWindow):
                 puerto.enviarDatosMonitor(cs, dispActual)
 
                 for i in range(0, len(cs['DISP_LISTA'])):
-                    dispActual = cs['DISP_LISTA'][i] - 1
-                    progActual = cs['PROG_LISTA'][i] - 1     
+                    #dispActual = cs['DISP_LISTA'][i] - 1 # Version 1.
+                    dispActual = 0 # Version 2.
+                    progActual = cs['PROG_LISTA'][i] - 1  
+
+                    dispAUX = cs['DISP_LISTA'][i] - 1    
 
                     if(window_3.combo_102.currentIndex() == 0):
                         puerto.enviarDatosServicios(cs, dispActual)  
                         puerto.enviarDatosSoldadura(cs, dispActual, progActual)
-                        puerto.enviarDatosSoldaduraDispositivo(dispActual, progActual)
+                        puerto.enviarDatosSoldaduraDispositivo(dispAUX, progActual)
 
                     elif(window_3.combo_102.currentIndex() == 1):
                         puerto.enviarDatosServicios(cs, dispActual)  
 
                     else:
                         puerto.enviarDatosCalibracion(cs, dispActual)
-                        puerto.enviarDatosServicios(cs, dispActual)                   
+                        puerto.enviarDatosServicios(cs, dispActual)  
                         puerto.enviarDatosSoldadura(cs, dispActual, progActual)
-                        puerto.enviarDatosSoldaduraDispositivo(dispActual, progActual)
+                        puerto.enviarDatosSoldaduraDispositivo(dispAUX, progActual)
                         
                     if( cs['CONFIGURACION'][0][0][3] > 1 ):
                         puerto.enviarDatosSoldaduraADC(cs, adc, dispActual, progActual)
@@ -367,7 +380,8 @@ class Main(QMainWindow):
                 cs['MONITOR'] = puerto.recibirDatosMonitor(cs, dispActual)
                 
                 for i in range(0, len(cs['DISP_LISTA'])):
-                    dispActual = cs['DISP_LISTA'][i] - 1
+                    #dispActual = cs['DISP_LISTA'][i] - 1 # Version 1.
+                    dispActual = 0 # Version 2.
                     progActual = cs['PROG_LISTA'][i] - 1   
 
                     if(window_3.combo_101.currentIndex() == 0):
@@ -787,7 +801,8 @@ class Main(QMainWindow):
         dato_3 = cs['MONITOR'].copy()
         dato_4 = cs['CALIBRACION'].copy()     
 
-        disp = self.caja_1.value() - 1
+        #disp = self.caja_1.value() - 1 # Version 1.
+        disp = 0 # Version 2.
         prog = self.caja_2.value() - 1
 
         #SOLDADURA
@@ -883,36 +898,29 @@ class Main(QMainWindow):
         X = [
             [0, 0, 0, 0, 0, 0, 0]
         ]
-        number = self.caja_500.value()  
         
+        number = self.caja_500.value()        
         rows = self.table_1.rowCount()
         columns = self.table_1.columnCount()
-        print( '- Row:', rows, '- Columns:', columns )
 
         # Pido datos al CS.
         selecPort = window_3.seleccionarPuerto()
-        
+
         puerto.confPuerto(selecPort, "OPEN")
         X = puerto.recibirDatosHistoricos(number)
-        puerto.confPuerto(selecPort, "CLOSE")   
-
-        """ X = [
-            [1, 1, 5, 5, 10, 10, 7],
-            [1, 1, 5, 4, 10, 10, 34],
-            [1, 1, 5, 5, 10, 10, 7],
-            [1, 1, 5, 5, 10, 10, 7],
-            [1, 1, 5, 5.5, 10, 10, 7],
-            [1, 1, 5, 5, 10, 10, 7],
-            [1, 1, 5, 5.1, 10, 10, 7],
-            [1, 1, 5, 5, 10, 10, 7],
-            [1, 1, 5, 4.9, 10, 10, 7],
-            [1, 1, 5, 5, 10, 10, 7],
-            [1, 1, 5, 5, 10, 10, 7],
-            [1, 1, 5, 5, 10, 10, 7]
-        ] """          
+        puerto.confPuerto(selecPort, "CLOSE") 
+        
+        """ try:
+            puerto.show()
+            puerto.confPuerto(selecPort, "OPEN")
+            X = puerto.recibirDatosHistoricos(number)
+            puerto.confPuerto(selecPort, "CLOSE")   
+            puerto.hide()
+        except:
+            puerto.hide() """       
 
         # Filtro los datos.
-        X = [ x for x in X if x[0] < 9 ]
+        X = [ x for x in X if x[0] < 9 and x[0] > 0 ]
         
         # Agrego los datos a la tabla.
         for i in range(0, rows):
@@ -927,11 +935,206 @@ class Main(QMainWindow):
             for i in range(0, columns):
                 self.table_1.setCellWidget( j, i, QLineEdit( readOnly=True ) )
                 self.table_1.cellWidget(j, i).setAlignment(QtCore.Qt.AlignCenter)
-                self.table_1.cellWidget(j, i).setText( str( X[j][i] ) )
+                self.table_1.cellWidget(j, i).setText( str( X[j][i] ) ) 
 
         # Grafico los datos.
         historic['HIST_1'] = X
         self.plotHistoric()
+
+    def cambioLabelCaja(self):
+        """  
+        """
+
+        if(self.btn_502.text() == 'ACTIVAR'):
+            self.btn_502.setText('DESACTIVAR')
+        else:
+            self.btn_502.setText('ACTIVAR')
+
+        self.plotHistoric()
+
+    def monitorEntradas(self):
+        """  
+        """
+
+        selecPort = window_3.seleccionarPuerto()
+
+        try:
+            puerto.confPuerto(selecPort, "OPEN")
+            dato = puerto.monitorEntradas()
+            puerto.confPuerto(selecPort, "CLOSE")   
+        except: 
+            dato = 0
+
+        # Input 1.
+        aux = 0
+        aux = ( dato >> 0 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_324.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_324.setStyleSheet('background-color: white')
+
+        # Input 2.
+        aux = 0
+        aux = ( dato >> 1 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_325.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_325.setStyleSheet('background-color: white')
+
+        # Input 3.
+        aux = 0
+        aux = ( dato >> 2 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_326.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_326.setStyleSheet('background-color: white')
+
+        # Input 4.
+        aux = 0
+        aux = ( dato >> 3 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_327.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_327.setStyleSheet('background-color: white')
+
+        # Input 5.
+        aux = 0
+        aux = ( dato >> 4 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_328.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_328.setStyleSheet('background-color: white')
+
+        # Input 6.
+        aux = 0
+        aux = ( dato >> 5 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_329.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_329.setStyleSheet('background-color: white')
+
+        # Input 7.
+        aux = 0
+        aux = ( dato >> 6 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_330.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_330.setStyleSheet('background-color: white')
+
+        # Input 8.
+        aux = 0
+        aux = ( dato >> 7 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_331.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_331.setStyleSheet('background-color: white')
+
+        # Input 9.
+        aux = 0
+        aux = ( dato >> 8 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_332.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_332.setStyleSheet('background-color: white')
+
+        # Input 10.
+        aux = 0
+        aux = ( dato >> 9 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_333.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_333.setStyleSheet('background-color: white')
+
+        # Input 11.
+        aux = 0
+        aux = ( dato >> 10 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_334.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_334.setStyleSheet('background-color: white')
+
+        # Input 12.
+        aux = 0
+        aux = ( dato >> 11 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_335.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_335.setStyleSheet('background-color: white')
+
+        # Input 13.
+        aux = 0
+        aux = ( dato >> 12 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_336.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_336.setStyleSheet('background-color: white')
+
+        # Input 14.
+        aux = 0
+        aux = ( dato >> 13 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_337.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_337.setStyleSheet('background-color: white')
+
+        # Input 15.
+        aux = 0
+        aux = ( dato >> 14 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_338.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_338.setStyleSheet('background-color: white')
+
+        # Input 16.
+        aux = 0
+        aux = ( dato >> 15 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_339.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_339.setStyleSheet('background-color: white')
+
+        # Input 17.
+        aux = 0
+        aux = ( dato >> 16 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_340.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_340.setStyleSheet('background-color: white')
+
+        # Input 18.
+        aux = 0
+        aux = ( dato >> 17 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_341.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_341.setStyleSheet('background-color: white')
+
+        # Input 19.
+        aux = 0
+        aux = ( dato >> 18 ) & 0x01
+
+        if(aux == 0):
+            self.lbl_342.setStyleSheet('background-color: lightgreen')
+        else:
+            self.lbl_342.setStyleSheet('background-color: white')
 
     def seteoExtremoCajas(self):
         """
@@ -1260,7 +1463,7 @@ class Main(QMainWindow):
         estado = True  (enabled)
         """
         
-        dispositivo = self.caja_1.value()
+        #dispositivo = self.caja_1.value()
         programa = self.caja_2.value()
         estado = False
 
@@ -1274,12 +1477,15 @@ class Main(QMainWindow):
 
         largo = len(cs["DISP_LISTA"])
         for i in range(0, largo):  
-            if( (dispositivo == cs['DISP_LISTA'][i]) and (programa == cs['PROG_LISTA'][i]) ):
+            #if( (dispositivo == cs['DISP_LISTA'][i]) and (programa == cs['PROG_LISTA'][i]) ): # Version 1.
+            if(programa == cs['PROG_LISTA'][i]): # Version 2.
                 estado = True
+                self.caja_1.setValue( cs['DISP_LISTA'][i] ) # Version 2.
                 break
             else:
                 estado = False
 
+        self.caja_1.setEnabled(estado)
         self.frame_100.setEnabled(estado)
 
     def ocultar(self):
@@ -1771,23 +1977,43 @@ class Main(QMainWindow):
 
         global historic
 
-        self.graphWidget_5.clear()
+        self.graphWidget_5.clear()        
 
-        Y_1 = [ x[2] for x in historic['HIST_1'] ]
-        Y_2 = [ x[3] for x in historic['HIST_1'] ]
+        #Filtro de programas.
+        if(self.btn_502.text() == 'ACTIVAR'):
+            Y_1 = [ x[2] for x in historic['HIST_1'] ]
+            Y_2 = [ x[3] for x in historic['HIST_1'] ]
 
-        pen_1 = pg.mkPen( color=(0, 0, 0), width=1 )
+        else:
+            prog_filter = self.caja_501.value()
+            Y_1 = [ x[2] for x in historic['HIST_1'] if x[1] == prog_filter ]
+            Y_2 = [ x[3] for x in historic['HIST_1'] if x[1] == prog_filter ]
+
+
+        pen_1 = pg.mkPen( color=(0, 0, 0), width=2 )
         pen_2 = pg.mkPen( color=(235, 152, 78), width=3 )
 
-        self.graphWidget_5.plot(Y_1[1:], pen=pen_1)
-        self.graphWidget_5.plot(Y_2[1:], pen=pen_2, symbol='o')
+        self.graphWidget_5.plot(Y_1[0:], pen=pen_1)
+        self.graphWidget_5.plot(Y_2[0:], pen=pen_2, symbol='o')
 
         try:
-            yMin = min( Y_2[1:] ) * (1 - 0.15)
-            yMax = max( Y_2[1:] ) * (1 + 0.15)
+            yMin = min( Y_2[1:] ) * (1 - 0.25)
+            yMax = max( Y_2[1:] ) * (1 + 0.25)
             self.graphWidget_5.setYRange( yMin, yMax )
         except:
             pass
+        
+        Y_SUP = [ x * 1.1 for x in Y_2 ]
+        Y_INF = [ x * 0.9 for x in Y_2 ]
+
+        brush = (0, 0, 0, 20)
+        plotHigh = pg.PlotCurveItem(Y_SUP, brush=brush)
+        plotLow = pg.PlotCurveItem(Y_INF, brush=brush)
+        plotFill = pg.FillBetweenItem(plotHigh, plotLow, brush=brush)
+
+        self.graphWidget_5.addItem(plotHigh)
+        self.graphWidget_5.addItem(plotLow)
+        self.graphWidget_5.addItem(plotFill)
 
 
 if __name__ == '__main__':

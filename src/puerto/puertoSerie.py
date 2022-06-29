@@ -179,12 +179,14 @@ class PuertoSerie(QDialog):
         for i in range(0, MAX_DISP):
 
             dispActual = i
-            for j in range(0, MAX_PROG):
+            for j in range(0, MAX_PROG+1):
 
                 progActual = j                
                 cont += 1
                 
-                D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
+                #D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
+                D_POSC_MEM = self.PROGR_TO_POSMEM(dispActual, progActual)
+
                 self.enviar(0x0027 + D_INI_SOLD + D_POSC_MEM, dato)                  # Comportamiento.
                 self.enviar(0x0032 + D_INI_SOLD + D_POSC_MEM, dato)                  # Dispositivo.
 
@@ -692,7 +694,6 @@ class PuertoSerie(QDialog):
         dato_LSB = dato & 0xFF
         self.enviar(0x001D + D_INI_SOLD + D_POSC_MEM, dato_MSB)              # Intensidad 2.
         self.enviar(0x001E + D_INI_SOLD + D_POSC_MEM, dato_LSB)              # Intensidad 2.
-        print(dato)
 
         #dato = self.conversorPorcentaje(cs['SOLDADURA'][dispActual][progActual][11], cs['CALIBRACION'], dispActual)
         dato = self.conversorPorcentaje(cs['SOLDADURA'][dispActual][progActual][11] + cs['SOLDADURA'][dispActual][progActual][22], cs['CALIBRACION'], dispActual)
@@ -778,7 +779,7 @@ class PuertoSerie(QDialog):
         D_POSC_MEM = self.PROGR_TO_POSMEM(dispActual, progActual)
 
         dato = int(dispActual)
-        self.enviar(0x0032 + D_INI_SOLD + D_POSC_MEM, dato)       
+        self.enviar(0x0032 + D_INI_SOLD + D_POSC_MEM, dato)
 
     def recibirDatosConfiguracion(self, cs):
         """
@@ -1246,25 +1247,39 @@ class PuertoSerie(QDialog):
         MAX_HIST: es la cantidad maxima de historicos que se pueden acumular.
         """
 
+        self.barraProgreso(0)
+
         MAX_HIST = 200
 
         D_INI_HISTORIAL = 0x4350
         D_INI_CONF = 0x0000
         CAMBIO = 0
 
-        array = np.zeros((cant, 7))
-
         dato_MSB = self.recibir(0x003A + D_INI_CONF)  
         dato_LSB = self.recibir(0x003B + D_INI_CONF)  
         contador = (dato_MSB << 8) + dato_LSB
+        if(contador > MAX_HIST or contador < 1): contador = 1
 
-        if(cant > contador):
-            CAMBIO = (contador - 1) * 0x0020
-        else:
-            CAMBIO = (contador - cant - 1) * 0x0020
+        # Generador del vector programas.
+        vect_prog = []
+        posicion_inicial = 0
+        aux_1 = contador - cant
 
-        for i in range(0, cant):
+        if(aux_1 > 0):
+            posicion_inicial = aux_1 + 1            
+            for i in range(posicion_inicial, contador+1): vect_prog.append(i)
             
+        else:
+            posicion_inicial = MAX_HIST - abs(aux_1) + 1            
+            for i in range(posicion_inicial, MAX_HIST+1): vect_prog.append(i)                
+            for i in range(1, contador+1): vect_prog.append(i)
+
+        # Envio de informacion.
+        cont = 0
+        len_array = len(vect_prog)
+        array = np.zeros((MAX_HIST+1, 7))
+        for i in vect_prog:
+            CAMBIO = (i-1) * 0x0020
             disp_actual = self.recibir(0x0000 + D_INI_HISTORIAL + CAMBIO)                  
             prog_actual = self.recibir(0x0001 + D_INI_HISTORIAL + CAMBIO)
 
@@ -1289,10 +1304,11 @@ class PuertoSerie(QDialog):
             array[i][5] = ciclo_medido
             array[i][6] = error
 
-            CAMBIO += 0x0020
+            cont += 1
+            self.barraProgreso( round( (cont/len_array) * 100 ) )
 
-        print(contador)
-        print(array)
+        #print(contador)
+        #print(vect_prog)
         
         return array
 
@@ -1383,6 +1399,24 @@ class PuertoSerie(QDialog):
         ser.write( bytes(dato.encode()) )                       # Envio bandera calibracion.
 
         self.barraProgreso(100)
+
+    def monitorEntradas(self):
+        """  
+        """
+
+        TIEMPO_DATO = 0.035
+
+        dato = "I"
+        ser.write( bytes(dato.encode()) )
+        time.sleep(TIEMPO_DATO)                     # Tiempo del CS.
+        
+        bytesToRead = ser.inWaiting()
+        dato = ser.read(bytesToRead)
+        dato = int(dato)
+
+        #dato = 0b0000000000000000001
+        
+        return dato
 
     def confPuerto(self, puerto, estado):
         """
