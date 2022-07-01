@@ -831,6 +831,8 @@ class Main(QMainWindow):
         self.caja_121.setValue( int(dato_1[disp][prog][19]) )   # Tolerancia 1.
         self.caja_122.setValue( int(dato_1[disp][prog][20]) )   # Tolerancia 2.
 
+        disp = self.caja_1.value() - 1 # Esta linea es muy importante.
+
         #SERVICIOS
         self.caja_200.setValue( int(dato_2[disp][0][0]) )
         self.caja_201.setValue( int(dato_2[disp][0][1]) )
@@ -906,18 +908,20 @@ class Main(QMainWindow):
         # Pido datos al CS.
         selecPort = window_3.seleccionarPuerto()
 
-        puerto.confPuerto(selecPort, "OPEN")
+        """ puerto.confPuerto(selecPort, "OPEN")
         X = puerto.recibirDatosHistoricos(number)
-        puerto.confPuerto(selecPort, "CLOSE") 
+        puerto.confPuerto(selecPort, "CLOSE") """ 
         
-        """ try:
+        try:
             puerto.show()
             puerto.confPuerto(selecPort, "OPEN")
             X = puerto.recibirDatosHistoricos(number)
             puerto.confPuerto(selecPort, "CLOSE")   
             puerto.hide()
         except:
-            puerto.hide() """       
+            puerto.hide()
+            mensaje = "No se pudo recuperar la informacion del [" + selecPort + "]."
+            QMessageBox.warning(self, "Alerta", mensaje)   
 
         # Filtro los datos.
         X = [ x for x in X if x[0] < 9 and x[0] > 0 ]
