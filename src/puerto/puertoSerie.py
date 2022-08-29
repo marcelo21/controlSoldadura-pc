@@ -29,9 +29,9 @@ class PuertoSerie(QDialog):
         #return ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
 
         # Version 2.
-        return ( 0x4020 + ( 0x0040 * progActual ) )
+        return ( 0x0040 * progActual )
 
-    def DISP_TO_POSMEM(self, dispActual):
+    def DISP_TO_POSMEM_1(self, dispActual):
         """
         """
 
@@ -55,6 +55,56 @@ class PuertoSerie(QDialog):
             return 0x42D0
         elif(dispActual == 8):
             return 0x4330
+        else:
+            return 0x0000
+
+    def DISP_TO_POSMEM_CALIB(self, dispActual):
+        """
+        """
+
+        base = 0x0050
+
+        if(dispActual == 0):
+            return 0x0000
+        elif(dispActual == 1):
+            return 0x40B0 - base
+        elif(dispActual == 2):
+            return 0x4110 - base
+        elif(dispActual == 3):
+            return 0x4170 - base
+        elif(dispActual == 4):
+            return 0x41D0 - base
+        elif(dispActual == 5):
+            return 0x4230 - base
+        elif(dispActual == 6):
+            return 0x4290 - base
+        elif(dispActual == 7):
+            return 0x42F0 - base
+        else:
+            return 0x0000
+
+    def DISP_TO_POSMEM_SERV(self, dispActual):
+        """
+        """
+
+        base = 0x0090
+
+        if(dispActual == 0):
+            return 0x0000
+        elif(dispActual == 1):
+            return 0x40F0 - base
+        elif(dispActual == 2):
+            return 0x4150 - base
+        elif(dispActual == 3):
+            return 0x41B0 - base
+        elif(dispActual == 4):
+            return 0x4210 - base
+        elif(dispActual == 5):
+            return 0x4270 - base
+        elif(dispActual == 6):
+            return 0x42D0 - base
+        elif(dispActual == 7):
+            return 0x4330 - base
         else:
             return 0x0000
 
@@ -157,16 +207,18 @@ class PuertoSerie(QDialog):
         """
 
         dato = 255
+        size_EEPROM = 65535
 
-        for i in range(0, 65535):
-            self.barraProgreso( 100 * i / 65535 )
+        for i in range(0, size_EEPROM):
+            self.barraProgreso( 100 * i / size_EEPROM )
             self.enviar(i, dato)
 
     def bloquearProgramas(self):
         """
         """
 
-        self.barraProgreso( 1 )
+        STEP = 6
+        self.barraProgreso( 0, STEP )
 
         D_INI_SOLD = 0x00B0
 
@@ -176,7 +228,7 @@ class PuertoSerie(QDialog):
         dato = 255
         cont = 0
 
-        for i in range(0, MAX_DISP):
+        """ for i in range(0, MAX_DISP):
 
             dispActual = i
             for j in range(0, MAX_PROG+1):
@@ -190,14 +242,27 @@ class PuertoSerie(QDialog):
                 self.enviar(0x0027 + D_INI_SOLD + D_POSC_MEM, dato)                  # Comportamiento.
                 self.enviar(0x0032 + D_INI_SOLD + D_POSC_MEM, dato)                  # Dispositivo.
 
-                self.barraProgreso(100 * cont / (MAX_DISP*MAX_PROG) )
+                self.barraProgreso( 100 * (j/MAX_PROG+1) ) """
+
+        dispActual = 0
+        for j in range(0, MAX_PROG+1):
+
+            progActual = j                
+            cont += 1
+
+            D_POSC_MEM = self.PROGR_TO_POSMEM(dispActual, progActual)
+
+            self.enviar(0x0027 + D_INI_SOLD + D_POSC_MEM, dato)                  # Comportamiento.
+            self.enviar(0x0032 + D_INI_SOLD + D_POSC_MEM, dato)                  # Dispositivo.
+
+            self.barraProgreso( 100 * (j/MAX_PROG), STEP )
 
     def bloquearPrograma(self, dispositivo, programa):
         """
         Se usaba en tabla.py pero ahora no ... F
         """
 
-        self.barraProgreso( 1 )
+        self.barraProgreso( 0 )
 
         D_INI_SOLD = 0x00B0
 
@@ -212,7 +277,8 @@ class PuertoSerie(QDialog):
         """
         """
 
-        self.barraProgreso(100 / 5 * 1)
+        STEP = 1
+        self.barraProgreso( 30, STEP )
 
         D_INI_CONF = 0x0000
 
@@ -239,11 +305,17 @@ class PuertoSerie(QDialog):
         dato = cs['CONFIGURACION'][0][0][5]
         self.enviar(0x0030 + D_INI_CONF, dato)          # Prog. Actual.
 
+        dato = cs['CONFIGURACION'][0][0][6]
+        self.enviar(0x0031 + D_INI_CONF, dato)          # Flags Inputs.
+
+        self.barraProgreso( 100, STEP )
+
     def enviarDatosMonitor(self, cs, dispActual):
         """
         """
 
-        self.barraProgreso(100 / 5 * 2)
+        STEP = 2
+        self.barraProgreso( 30, STEP )
 
         D_INI_MONITOR = 0x0040
 
@@ -290,15 +362,16 @@ class PuertoSerie(QDialog):
         self.enviar(0x000A + D_INI_MONITOR, dato_MSB)   # Intensidad.
         self.enviar(0x000B + D_INI_MONITOR, dato_LSB)   # Intensidad.
 
+        self.barraProgreso( 100, STEP ) 
+
     def enviarDatosCalibracion(self, cs, dispActual):
         """
         """
 
-        self.barraProgreso(100 / 5 * 3)
+        STEP = 3
 
         D_INI_CALI = 0x0050
-        #D_POSC_MEM = ( 0x4020 * dispActual )
-        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
+        D_POSC_MEM = self.DISP_TO_POSMEM_CALIB(dispActual)
 
         #################### PARAMETROS USUARIOS.        
         
@@ -435,13 +508,16 @@ class PuertoSerie(QDialog):
         dato = cs['CALIBRACION'][dispActual][0][4] 
         self.enviar(0x002C + D_INI_CALI + D_POSC_MEM, dato)         # Tiempo Mant. 
 
+        base = list(cs['DISP_LISTA'])
+        base_max = len(base)
+        self.barraProgreso( 100 * (dispActual/base_max), STEP )  
+
     def enviarDatosCalibracionADC(self, dispActual, numero_medicion, dato):
         """
         """
 
         D_INI_CALI = 0x0050
-        #D_POSC_MEM = ( 0x4020 * dispActual )
-        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
+        D_POSC_MEM = self.DISP_TO_POSMEM_CALIB(dispActual)
 
         dato = int( round(dato) )
         dato_MSB = dato >> 8
@@ -474,11 +550,10 @@ class PuertoSerie(QDialog):
         """
         """
 
-        self.barraProgreso(100 / 5 * 4)
+        STEP = 4
 
         D_INI_SERV = 0x0090
-        #D_POSC_MEM = ( 0x4020 * dispActual )
-        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
+        D_POSC_MEM = self.DISP_TO_POSMEM_SERV(dispActual)
 
         #################### PARAMETROS USUARIOS.
 
@@ -568,11 +643,15 @@ class PuertoSerie(QDialog):
         dato = int(cs['SERVICIOS'][dispActual][0][5])
         self.enviar(0x001B + D_INI_SERV + D_POSC_MEM, dato)          # % Incremento.
 
+        base = list(cs['DISP_LISTA'])
+        base_max = len(base)
+        self.barraProgreso( 100 * (dispActual/base_max), STEP ) 
+
     def enviarDatosSoldadura(self, cs, dispActual, progActual):
         """
         """
 
-        self.barraProgreso(100 / 5 * 5)
+        #self.barraProgreso(100 / 5 * 5)
 
         print("- DISP:", dispActual + 1, "- PROG:", progActual + 1)
 
@@ -583,6 +662,8 @@ class PuertoSerie(QDialog):
         #################### PARAMETROS USUARIOS.
 
         # 1
+
+        dispActual = 0
     
         dato = int(cs['SOLDADURA'][dispActual][progActual][0])
         self.enviar(0x0000 + D_INI_SOLD + D_POSC_MEM, dato)                  # Acercamiento.
@@ -778,14 +859,15 @@ class PuertoSerie(QDialog):
         D_INI_SOLD = 0x00B0
         D_POSC_MEM = self.PROGR_TO_POSMEM(dispActual, progActual)
 
-        dato = int(dispActual)
+        dato = int(dispActual + 1)
         self.enviar(0x0032 + D_INI_SOLD + D_POSC_MEM, dato)
 
     def recibirDatosConfiguracion(self, cs):
         """
         """
 
-        self.barraProgreso(100 / 5 * 1)
+        STEP = 1
+        self.barraProgreso( 20, STEP )
 
         D_INI_CONF = 0x0000
 
@@ -805,11 +887,16 @@ class PuertoSerie(QDialog):
 
         ################### Agregar Nombre, MAC, IP
 
-        dato = self.recibir(0x0004 + D_INI_CONF)
+        dato = self.recibir(0x002F + D_INI_CONF)
         cs['CONFIGURACION'][0][0][4] = dato             # Disp. Actual.
 
-        dato = self.recibir(0x0005 + D_INI_CONF)
+        dato = self.recibir(0x0030 + D_INI_CONF)
         cs['CONFIGURACION'][0][0][5] = dato             # Prog. Actual.
+
+        dato = self.recibir(0x0031 + D_INI_CONF)
+        cs['CONFIGURACION'][0][0][6] = dato             # Flags Inputs.
+
+        self.barraProgreso( 100, STEP )
 
         return cs['CONFIGURACION']
 
@@ -817,7 +904,8 @@ class PuertoSerie(QDialog):
         """
         """
 
-        self.barraProgreso(100 / 5 * 2)
+        STEP = 2
+        self.barraProgreso( 20, STEP )
 
         D_INI_MONITOR = 0x0040
 
@@ -841,7 +929,9 @@ class PuertoSerie(QDialog):
         cs['MONITOR'][0][0][2] = dato        
 
         dato = self.recibir(0x0007 + D_INI_MONITOR)                     # Tiempo 3.
-        cs['MONITOR'][0][0][4] = dato       
+        cs['MONITOR'][0][0][4] = dato
+
+        self.barraProgreso( 100, STEP )       
 
         return cs['MONITOR']
 
@@ -849,11 +939,10 @@ class PuertoSerie(QDialog):
         """
         """
 
-        self.barraProgreso(100 / 5 * 3)
+        STEP = 4
 
         D_INI_CALI = 0x0050
-        #D_POSC_MEM = ( 0x4020 * dispActual )
-        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
+        D_POSC_MEM = self.DISP_TO_POSMEM_CALIB(dispActual)
 
         #################### PARAMETROS USUARIOS.        
         
@@ -958,10 +1047,10 @@ class PuertoSerie(QDialog):
         #################### PARAMETROS CONTROL.
 
         dato = self.recibir(0x0027 + D_INI_CALI + D_POSC_MEM)  
-        cs['CALIBRACION'][dispActual][0][0] = dato                  # Tiempo Acerc.             
+        cs['CALIBRACION'][dispActual][0][0] = dato                  # Tiempo Acerc.  
 
         dato = self.recibir(0x0028 + D_INI_CALI + D_POSC_MEM)  
-        cs['CALIBRACION'][dispActual][0][1] = dato                  # Tiempo Apriete.  
+        cs['CALIBRACION'][dispActual][0][1] = dato                  # Tiempo Apriete.
 
         dato_MSB = self.recibir(0x0029 + D_INI_CALI + D_POSC_MEM)  
         dato_LSB = self.recibir(0x002A + D_INI_CALI + D_POSC_MEM) 
@@ -972,7 +1061,11 @@ class PuertoSerie(QDialog):
         cs['CALIBRACION'][dispActual][0][3] = dato                  # Tiempo Sold.
 
         dato = self.recibir(0x002C + D_INI_CALI + D_POSC_MEM)
-        cs['CALIBRACION'][dispActual][0][4] = dato                  # Tiempo Mant.              
+        cs['CALIBRACION'][dispActual][0][4] = dato                  # Tiempo Mant.   
+
+        base = list(cs['DISP_LISTA'])
+        base_max = len(base)
+        self.barraProgreso( 100 * (dispActual/base_max), STEP )
 
         return cs['CALIBRACION']
 
@@ -981,8 +1074,7 @@ class PuertoSerie(QDialog):
         """
 
         D_INI_CALI = 0x0050
-        #D_POSC_MEM = ( 0x4020 * dispActual )
-        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
+        D_POSC_MEM = self.DISP_TO_POSMEM_CALIB(dispActual)
 
         dato_MSB = self.recibir(0x0035 + D_INI_CALI + D_POSC_MEM)
         dato_LSB = self.recibir(0x0036 + D_INI_CALI + D_POSC_MEM) 
@@ -1015,11 +1107,10 @@ class PuertoSerie(QDialog):
         """
         """
 
-        self.barraProgreso(100 / 5 * 4)
+        STEP = 5
 
         D_INI_SERV = 0x0090
-        #D_POSC_MEM = ( 0x4020 * dispActual )
-        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
+        D_POSC_MEM = self.DISP_TO_POSMEM_SERV(dispActual)
         
         dato_MSB = self.recibir(0x0000 + D_INI_SERV + D_POSC_MEM)          
         dato_LSB = self.recibir(0x0001 + D_INI_SERV + D_POSC_MEM)          
@@ -1081,7 +1172,11 @@ class PuertoSerie(QDialog):
         cs['SERVICIOS'][dispActual][0][4] = dato                    # Curva.          
             
         dato = self.recibir(0x001B + D_INI_SERV + D_POSC_MEM)  
-        cs['SERVICIOS'][dispActual][0][5] = dato                    # % Incremento.    
+        cs['SERVICIOS'][dispActual][0][5] = dato                    # % Incremento.   
+
+        base = list(cs['DISP_LISTA'])
+        base_max = len(base)
+        self.barraProgreso( 100 * (dispActual/base_max), STEP )  
 
         return cs['SERVICIOS']
 
@@ -1089,13 +1184,17 @@ class PuertoSerie(QDialog):
         """
         """
 
-        self.barraProgreso(100 / 5 * 5)
+        #self.barraProgreso(100 / 5 * 5)
+        #self.barraProgreso( 100 * (progActual/255) )
 
-        print("- DISP:", dispActual + 1, "- PROG:", progActual + 1)
+        #print("- DISP:", dispActual + 1, "- PROG:", progActual + 1)
+        print("- DISP:", dispActual, "- PROG:", progActual + 1)
 
         D_INI_SOLD = 0x00B0
         #D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
         D_POSC_MEM = self.PROGR_TO_POSMEM(dispActual, progActual)
+
+        dispActual = 0 
 
         # 1
 
@@ -1210,7 +1309,6 @@ class PuertoSerie(QDialog):
         """
 
         D_INI_SOLD = 0x00B0
-        #D_POSC_MEM = ( ( 0x4020 * dispActual ) + ( 0x0040 * progActual ) )
         D_POSC_MEM = self.PROGR_TO_POSMEM(dispActual, progActual)
 
         dato_MSB = self.recibir(0x002A + D_INI_SOLD + D_POSC_MEM)     
@@ -1220,34 +1318,37 @@ class PuertoSerie(QDialog):
 
         return adc['SOLDADURA_I']
 
-    def recibirDatosSoldaduraDispositivo(self, cs, dispActual, progActual):
+    def recibirDatosSoldaduraDispositivo(self, dispActual, progActual):
         """
         """
 
-        cs['DISP_LISTA'] = []
-        cs['PROG_LISTA'] = []
+        STEP = 3
 
         D_INI_SOLD = 0x00B0
-        #D_POSC_MEM = self.PROGR_TO_POSMEM(dispActual, progActual)
+        D_POSC_MEM = self.PROGR_TO_POSMEM(dispActual, progActual)
 
-        dato = 0
-        for i in range(0, 255):
+        data_1 = 0
+        data_2 = 0
+        data_1 = self.recibir(0x0027 + D_INI_SOLD + D_POSC_MEM) # Comportamiento
+        data_2 = self.recibir(0x0032 + D_INI_SOLD + D_POSC_MEM) # Dispositivo
+        
+        self.barraProgreso( 100 * (progActual/256), STEP )
 
-            D_POSC_MEM = self.PROGR_TO_POSMEM(0, i)
-            dato = self.recibir(0x0032 + D_INI_SOLD + D_POSC_MEM)            
+        if( ( data_1 != 0 and data_1 != 255 ) and ( data_2 < 9 ) ):
+            #print('- Comportamiento: ', data_1, ' - Dispositivo: ', data_2)
+            pass
+        else:
+            data_1 = 0
+            data_2 = 0
 
-            if( dato >= 1 and dato <= 8 ): 
-                cs['DISP_LISTA'].append(dato)
-                cs['PROG_LISTA'].append(i+1)
-
-        return cs['DISP_LISTA'], cs['PROG_LISTA']
+        return data_1, data_2
 
     def recibirDatosHistoricos(self, cant):
         """  
         MAX_HIST: es la cantidad maxima de historicos que se pueden acumular.
         """
 
-        self.barraProgreso(0)
+        self.barraProgreso(0, 1)
 
         MAX_HIST = 200
 
@@ -1305,7 +1406,7 @@ class PuertoSerie(QDialog):
             array[i][6] = error
 
             cont += 1
-            self.barraProgreso( round( (cont/len_array) * 100 ) )
+            self.barraProgreso( round( (cont/len_array) * 100 ), 1 )
 
         #print(contador)
         #print(vect_prog)
@@ -1316,11 +1417,11 @@ class PuertoSerie(QDialog):
         """
         """
 
-        self.barraProgreso(100 / 5 * 3)
+        STEP = 1
+        self.barraProgreso( 10, STEP )
 
         D_INI_CALI = 0x0050
-        #D_POSC_MEM = 0x4020 * dispActual
-        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
+        D_POSC_MEM = self.DISP_TO_POSMEM_CALIB(dispActual)
 
         print("-Fuerza-")
         
@@ -1333,17 +1434,17 @@ class PuertoSerie(QDialog):
         dato = "E"                                              # CS hay que calibrar. 
         ser.write( bytes(dato.encode()) )                       # Envio bandera calibracion.
 
-        self.barraProgreso(100)
+        self.barraProgreso( 100, STEP )
 
     def medirIntensidad(self, cs, dispActual, dato):
         """
         """
 
-        self.barraProgreso(100 / 5 * 3)
+        STEP = 2
+        self.barraProgreso( 10, STEP )
 
         D_INI_CALI = 0x0050
-        #D_POSC_MEM = 0x4020 * dispActual
-        D_POSC_MEM = self.DISP_TO_POSMEM(dispActual)
+        D_POSC_MEM = self.DISP_TO_POSMEM_CALIB(dispActual)
 
         # Fuerza.
 
@@ -1370,22 +1471,24 @@ class PuertoSerie(QDialog):
         dato = "F"                                              # CS hay que calibrar. 
         ser.write( bytes(dato.encode()) )                       # Envio bandera calibracion.
 
-        self.barraProgreso(100)
+        STEP = 1
+        self.barraProgreso( 100, STEP )
 
     def monitorFuerza(self):
         """
         """
-        
-        self.barraProgreso(100 / 5 * 3)
 
         # Fuerza.
+        
+        STEP = 3
+        self.barraProgreso( 10, STEP )        
 
         print("-Fuerza-")
 
         dato = "G"                                              # CS vamos a monitor fuerza. 
         ser.write( bytes(dato.encode()) )                       # Envio bandera calibracion.
 
-        self.barraProgreso(100)
+        self.barraProgreso( 100, STEP )
 
     def monitorIntensidad(self):
         """
@@ -1393,12 +1496,15 @@ class PuertoSerie(QDialog):
 
         # Intensidad.
 
+        STEP = 4
+        self.barraProgreso( 10, STEP )
+
         print("-Intensidad-")
 
         dato = "H"                                              # CS vamos a monito intensidad. 
         ser.write( bytes(dato.encode()) )                       # Envio bandera calibracion.
-
-        self.barraProgreso(100)
+        
+        self.barraProgreso( 100, STEP )
 
     def monitorEntradas(self):
         """  
@@ -1426,18 +1532,17 @@ class PuertoSerie(QDialog):
 
         global ser
 
-        TIEMPO_CONEXION = 0.025                                 # Tiempo para habilitar la conexion.
-        VELOCIDAD = 9600                                        # Velocidad del puerto.
+        TIEMPO_CONEXION = 0.035                                                 # Tiempo para habilitar la conexion.
+        VELOCIDAD = 9600                                                        # Velocidad del puerto.
         TIMEOUT = 0.035
 
         if(estado == "OPEN"):
             ser = serial.Serial(puerto, baudrate=VELOCIDAD, timeout=TIMEOUT)    # Configuro el puerto.
-            #ser = serial.Serial(puerto, baudrate=VELOCIDAD)    # Configuro el puerto.
-            time.sleep(TIEMPO_CONEXION)                        # Retardo para establecer 
-                                                               # la conexión serial.
+            time.sleep(TIEMPO_CONEXION)                                         # Retardo para establecer 
+                                                                                # la conexión serial.
             
-            ser.flushInput()                                   # Limpio la entrada.
-            ser.flushOutput()                                  # Limpio la salida.
+            ser.flushInput()                                                    # Limpio la entrada.
+            ser.flushOutput()                                                   # Limpio la salida.
 
         else:
 
@@ -1481,8 +1586,8 @@ class PuertoSerie(QDialog):
 
     def recibir(self, direccion, dato='A'):
         """
-        direccion = A: Son los datos almacenados en la eeprom.
-        direccion = B: Son los datos del (ADC).
+        dato = A: Son los datos almacenados en la eeprom.
+        dato = B: Son los datos del (ADC).
         """
 
         global ser
@@ -1493,11 +1598,10 @@ class PuertoSerie(QDialog):
         QtCore.QCoreApplication.processEvents()
 
         TIEMPO_DATO = 0.035                         # Tiempo que le toma al CS 
-                                                    # para guardar la informacion.  
+                                                    # para guardar la informacion. 
 
         direccion_MSB = str(direccion >> 8)
         direccion_LSB = str(direccion & 0xFF)
-        #dato = "A"                                  # Le aviso al CS que hay que leer. Supuestamente no tiene que ir.
 
         ser.write( bytes(direccion_MSB.encode()) )
         ser.write( bytes(flagMBS.encode()) )        # Direccion MSB.
@@ -1505,12 +1609,12 @@ class PuertoSerie(QDialog):
         ser.write( bytes(direccion_LSB.encode()) )
         ser.write( bytes(flagLBS.encode()) )        # Direccion LSB.
 
-        ser.write( bytes(dato.encode()) )
+        ser.write( bytes(dato.encode()) )           # Revisar en la documentacion las diferentes funciones.
 
         time.sleep(TIEMPO_DATO)                     # Tiempo del CS.
 
         try:
-            bytesToRead = ser.inWaiting()
+            bytesToRead = ser.in_waiting
             dato = ser.read(bytesToRead)
             dato = int(dato)
 
@@ -1538,11 +1642,14 @@ class PuertoSerie(QDialog):
 
         return (puertos)
 
-    def barraProgreso(self, valor):
+    def barraProgreso(self, progress, step):
         """
         """
 
-        self.progressBar.setValue(valor)
+        text_1 = "Paso [" + str(step) + "/5]"
+        self.label_1.setText(text_1)
+
+        self.progressBar.setValue(progress)
 
 
 if __name__ == '__main__':

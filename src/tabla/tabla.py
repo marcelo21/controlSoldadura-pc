@@ -201,7 +201,17 @@ class Tabla(QDialog):       # guiTabla-viejo.ui
         #vectorFuncion = cs['SOLDADURA']
         vectorEtiqueta = cs['ETIQUETA']
 
-        filas_max = self.table_100.rowCount()
+        #print('¿' * 40)
+        #print(vectorProgramas)
+        #print(vectorDispositivo)
+        #print(vectorEtiqueta)
+        #print('¿' * 40)
+
+        if( len(vectorDispositivo) != len(vectorEtiqueta) ):
+            filas_max = len(vectorProgramas) - 1
+        else:
+            filas_max = self.table_100.rowCount()
+        
         for i in range(0, filas_max):
             self.table_100.removeRow(1)
 
@@ -209,12 +219,16 @@ class Tabla(QDialog):       # guiTabla-viejo.ui
         for i in range(0, filas_max):
             self.agregarFilas()
 
-        filas_max = len(vectorDispositivo) 
+        filas_max = len(vectorDispositivo)
         for i in range(0, filas_max):
-            disp = vectorDispositivo[i] - 1
+            #disp = vectorDispositivo[i] - 1 # Version 1.
+            disp = 0 # Version 2.
             prog = vectorProgramas[i] - 1
-            
-            self.seteoFila(i, vectorProgramas[i], vectorDispositivo[i], cs['SOLDADURA'][disp][prog][21], vectorEtiqueta[i])
+
+            if( len(vectorDispositivo) != len(vectorEtiqueta) ):
+                self.seteoFila(i, vectorProgramas[i], vectorDispositivo[i], cs['SOLDADURA'][disp][prog][21], '') 
+            else:            
+                self.seteoFila(i, vectorProgramas[i], vectorDispositivo[i], cs['SOLDADURA'][disp][prog][21], vectorEtiqueta[i])             
 
         self.juntoFilas()
 

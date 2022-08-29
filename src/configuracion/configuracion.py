@@ -9,6 +9,10 @@ class Configuracion(QDialog):
         super().__init__()
         uic.loadUi('configuracion/guiConfiguracion.ui', self)
 
+        self.btn_1.clicked.connect(self.ventanaInputs)
+
+        self.window_inputs = ListaInputs()
+
     def setearPuerto(self, puertos):
         """
         """
@@ -130,6 +134,17 @@ class Configuracion(QDialog):
             self.r_btn_106.setChecked(False)
             self.r_btn_107.setChecked(True)
 
+        self.window_inputs.setListInputs( int(cs['CONFIGURACION'][0][0][6]) )
+
+    def ventanaInputs(self):
+        """
+        """
+
+        self.window_inputs.show()
+
+        #self.window_inputs.setListInputs( 0b00010011 ) # test
+        #self.window_inputs.getListInputs() # test
+
 
 class ListaErrores(QDialog):
 
@@ -138,12 +153,52 @@ class ListaErrores(QDialog):
         uic.loadUi('configuracion/guiTablaErrores.ui', self)
 
 
+class ListaInputs(QDialog):
+
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('configuracion/guiFlagsInputs.ui', self)
+
+    def setListInputs(self, data):
+        """
+        """
+
+        self.lbl_1.setChecked( (data >> 0) & 1 )
+        self.lbl_2.setChecked( (data >> 1) & 1 )
+        self.lbl_3.setChecked( (data >> 2) & 1 )
+        self.lbl_4.setChecked( (data >> 3) & 1 )
+        self.lbl_5.setChecked( (data >> 4) & 1 )
+        self.lbl_6.setChecked( (data >> 5) & 1 )
+        self.lbl_7.setChecked( (data >> 6) & 1 )
+        self.lbl_8.setChecked( (data >> 7) & 1 ) 
+
+    def getListInputs(self):
+        """
+        """
+
+        data = 0
+
+        aux_1 = self.lbl_1.isChecked()
+        aux_2 = self.lbl_2.isChecked()
+        aux_3 = self.lbl_3.isChecked()
+        aux_4 = self.lbl_4.isChecked()
+        aux_5 = self.lbl_5.isChecked()
+        aux_6 = self.lbl_6.isChecked()        
+        aux_7 = self.lbl_7.isChecked() 
+        aux_8 = self.lbl_8.isChecked()
+
+        data = (aux_1 << 0) | (aux_2 << 1) | (aux_3 << 2) | (aux_4 << 3) | (aux_5 << 4) | (aux_6 << 5) | (aux_7 << 6) | (aux_8 << 7)
+
+        return data
+
+
 if __name__ == '__main__':
     
     app = QApplication(sys.argv)
 
     window_1 = Configuracion()
     window_2 = ListaErrores()
+    #window_3 = ListaInputs()
 
     window_1.show()
 

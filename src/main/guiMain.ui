@@ -732,7 +732,7 @@
                  </size>
                 </property>
                 <property name="maximum">
-                 <number>250</number>
+                 <number>255</number>
                 </property>
                </widget>
               </item>
@@ -751,7 +751,7 @@
                  </size>
                 </property>
                 <property name="maximum">
-                 <number>250</number>
+                 <number>255</number>
                 </property>
                </widget>
               </item>

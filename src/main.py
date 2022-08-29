@@ -12,6 +12,7 @@ import datetime
 
 import numpy as np
 import pandas as pd
+from regex import P
 from sympy import primitive, symbols
 #import pyqtgraph
 
@@ -21,16 +22,17 @@ from copiar.copiar import Copiar
 from tabla.tabla import Tabla
 from puerto.puertoSerie import PuertoSerie
 from configuracion.configuracion import ListaErrores
+from configuracion.configuracion import ListaInputs
 
 MAXDISP = 8
-MAXPROG = 255
+MAXPROG = 256
 
 cs = {
     'CONFIGURACION' : np.zeros((1, 1, 16)),
     'MONITOR'       : np.zeros((1, 1, 6)),
     'CALIBRACION'   : np.zeros((MAXDISP, 1, 25)),
     'SERVICIOS'     : np.zeros((MAXDISP, 1, 12)),
-    'SOLDADURA'     : np.zeros((MAXDISP, MAXPROG, 24)),    #Antes --- 'SOLDADURA' : np.zeros((5, 255, 22))
+    'SOLDADURA'     : np.zeros((MAXDISP, MAXPROG, 24)),
     'PROG_LISTA'    : [1],
     'DISP_LISTA'    : [1],
     'ETIQUETA'      : [""]    
@@ -46,12 +48,6 @@ adc = {
 historic = {
     'HIST_1': np.zeros((1,7))
 }
-
-# adc['CALIBRACION_I'][0][0][0] = 110 # 20
-# adc['CALIBRACION_I'][0][0][1] = 220 # 30
-# adc['CALIBRACION_I'][0][0][2] = 330 # 40
-# adc['CALIBRACION_I'][0][0][3] = 440 # 50
-# adc['CALIBRACION_I'][0][0][4] = 550 # 60
 
 class Main(QMainWindow):
     
@@ -217,12 +213,12 @@ class Main(QMainWindow):
         self.btn_408.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_418.value(), 4) )
         self.btn_409.clicked.connect( lambda: self.medirCalibracion("Intensidad", self.caja_419.value(), 5) )
 
-        # self.btn_410.clicked.connect(self.pedirADC)
-
         # MONITOR.        
         self.actionFuerzaa.triggered.connect( lambda: self.monitor("Fuerza") )
-        #self.actionIntensidad.triggered.connect( lambda: self.monitor("Intensidad") )
-        self.actionIntensidad.triggered.connect( self.monitorEntradas )
+        self.actionIntensidad.triggered.connect( lambda: self.monitor("Intensidad") )
+
+        #self.actionIntensidad.triggered.connect( self.monitorEntradas )    # test
+        #self.actionIntensidad.triggered.connect( self.recibirADC )  # test
 
         # HISTORICO.
         self.btn_500.clicked.connect(self.historicoSoldadura)
@@ -252,7 +248,7 @@ class Main(QMainWindow):
 
     def PC_CS(self):
         """
-        """        
+        """
 
         self.preguntoValorExtremoCajas()
 
@@ -269,9 +265,9 @@ class Main(QMainWindow):
 
             self.pidoDatosConfiguracion()  
             self.pidoDatosTabla()
-
-            dispActual = self.caja_1.value() - 1
-            progActual = self.caja_2.value() - 1    
+            
+            dispActual = 0
+            progActual = 0  
 
             try:
                 puerto.show()
@@ -281,7 +277,35 @@ class Main(QMainWindow):
                 puerto.enviarDatosConfiguracion(cs)
                 puerto.enviarDatosMonitor(cs, dispActual)
 
-                for i in range(0, len(cs['DISP_LISTA'])):
+                dispAUX = list( set(cs['DISP_LISTA']) )
+                for i in dispAUX:
+                    dispActual = i-1
+
+                    puerto.enviarDatosCalibracion(cs, dispActual)
+                    puerto.enviarDatosServicios(cs, dispActual)
+
+                    if( cs['CONFIGURACION'][0][0][3] > 1 ):
+                        for i in range(1, 6):
+                            puerto.enviarDatosCalibracionADC(dispActual, i, adc['CALIBRACION_I'][0][0][i-1])
+                    else:
+                        pass
+                    
+                for i in range(0, len(cs['PROG_LISTA'])):
+                    dispActual = cs['DISP_LISTA'][i] - 1
+                    progActual = cs['PROG_LISTA'][i] - 1
+
+                    puerto.enviarDatosSoldadura(cs, dispActual, progActual)
+                    puerto.enviarDatosSoldaduraDispositivo(dispActual, progActual)
+
+                    if( cs['CONFIGURACION'][0][0][3] > 1 ):
+                        puerto.enviarDatosSoldaduraADC(cs, adc, dispActual, progActual)                        
+                    else:
+                        pass
+
+                puerto.confPuerto(selecPort, "CLOSE")            
+                puerto.hide()
+
+                """ for i in range(0, len(cs['DISP_LISTA'])):
                     #dispActual = cs['DISP_LISTA'][i] - 1 # Version 1.
                     dispActual = 0 # Version 2.
                     progActual = cs['PROG_LISTA'][i] - 1  
@@ -290,7 +314,7 @@ class Main(QMainWindow):
 
                     if(window_3.combo_102.currentIndex() == 0):
                         puerto.enviarDatosServicios(cs, dispActual)  
-                        puerto.enviarDatosSoldadura(cs, dispActual, progActual)
+                        puerto.enviarDatosSoldadura(cs, dispAUX, progActual)
                         puerto.enviarDatosSoldaduraDispositivo(dispAUX, progActual)
 
                     elif(window_3.combo_102.currentIndex() == 1):
@@ -314,7 +338,7 @@ class Main(QMainWindow):
                     # puerto.enviarDatosSoldadura(cs, dispActual, progActual)
 
                 puerto.confPuerto(selecPort, "CLOSE")            
-                puerto.hide()
+                puerto.hide() """
 
             except:
                 puerto.hide()
@@ -348,6 +372,8 @@ class Main(QMainWindow):
     def CS_PC(self):
         """
         """
+        
+        global MAXPROG
 
         pregunta = QMessageBox.question(self, 
                                         "Atencion", 
@@ -355,34 +381,57 @@ class Main(QMainWindow):
                                         QMessageBox.Ok | QMessageBox.Cancel
                                        )
 
-        self.valorCajas()
+        #self.valorCajas() # Pedir esta informacion es innecesario.
 
         if pregunta == QMessageBox.Ok:
             #recibo el diccionario.
 
             self.pidoDatosConfiguracion()  
 
-            dispActual = self.caja_1.value() - 1
-            progActual = self.caja_2.value() - 1
+            dispActual = 0
+            progActual = 0
 
             try:
                 puerto.show()
                 selecPort = window_3.seleccionarPuerto()
-                puerto.confPuerto(selecPort, "OPEN")   
-
-                # Agregar la lectura de los 255 PROG para ver cuales estan disponibles.
-                # se puede hacer una funcion que se llame escaneo de memoria.
-                # si la cantidad maxima de filas de la tabla es == 1, ahi pregunto si quiero escanear la memoria.
-
-                #cs['DISP_LISTA'], cs['PROG_LISTA'] = puerto.recibirDatosSoldaduraDispositivo(cs, dispActual, progActual)       
+                puerto.confPuerto(selecPort, "OPEN") 
 
                 cs['CONFIGURACION'] = puerto.recibirDatosConfiguracion(cs)
                 cs['MONITOR'] = puerto.recibirDatosMonitor(cs, dispActual)
+
+                cs['PROG_LISTA'] = [1]
+                cs['DISP_LISTA'] = [1]
+                for i in range(0, MAXPROG):
+                    data = puerto.recibirDatosSoldaduraDispositivo(0, i)                    
+
+                    if(data[0] != 0 and i>0):
+                        cs['SOLDADURA'] = puerto.recibirDatosSoldadura(cs, data[1], i)
+                        cs['PROG_LISTA'].append(i+1)
+                        cs['DISP_LISTA'].append(data[1])
+
+                    elif(data[0] != 0 and i==0):
+                        cs['SOLDADURA'] = puerto.recibirDatosSoldadura(cs, data[1], i)
+                        cs['PROG_LISTA'][0] = i+1
+                        cs['DISP_LISTA'][0] = data[1]
+
+                    else:
+                        pass
+
+                dispAUX = list( set(cs['DISP_LISTA']) )
+                for i in dispAUX:
+                    dispActual = i-1
+
+                    cs['CALIBRACION'] = puerto.recibirDatosCalibracion(cs, dispActual)
+                    cs['SERVICIOS'] = puerto.recibirDatosServicios(cs, dispActual)       
+
+                    if( cs['CONFIGURACION'][0][0][3] > 0 ):
+                        adc['CALIBRACION_I'] = puerto.recibirDatosCalibracionADC(adc, dispActual)
+                    else:
+                        pass          
                 
-                for i in range(0, len(cs['DISP_LISTA'])):
-                    #dispActual = cs['DISP_LISTA'][i] - 1 # Version 1.
-                    dispActual = 0 # Version 2.
-                    progActual = cs['PROG_LISTA'][i] - 1   
+                """ for i in range(0, len(cs['DISP_LISTA'])):
+                    dispActual = cs['DISP_LISTA'][i] - 1
+                    progActual = cs['PROG_LISTA'][i] - 1                     
 
                     if(window_3.combo_101.currentIndex() == 0):
                         
@@ -398,17 +447,13 @@ class Main(QMainWindow):
                     if( cs['CONFIGURACION'][0][0][3] > 0 ):
                         adc['CALIBRACION_I'] = puerto.recibirDatosCalibracionADC(adc, dispActual)
                     else:
-                        pass
-
-                    # cs['CALIBRACION'] = puerto.recibirDatosCalibracion(cs, dispActual)
-                    # cs['SERVICIOS'] = puerto.recibirDatosServicios(cs, dispActual)
-                    # cs['SOLDADURA'] = puerto.recibirDatosSoldadura(cs, dispActual, progActual)
+                        pass """
 
                 puerto.confPuerto(selecPort, "CLOSE")            
                 puerto.hide()       
-
+                
                 window_3.cargoConfiguracion(cs)
-                window_5.cargoTabla(cs)         
+                window_5.cargoTabla(cs)    
 
             except:
                 puerto.hide()
@@ -420,6 +465,7 @@ class Main(QMainWindow):
             pass
         
         self.seteoCajas()
+        window_5.show()
 
     def medirCalibracion(self, modo, dato, medicion):
         """
@@ -535,16 +581,21 @@ class Main(QMainWindow):
 
     def recibirADC(self):
         """
+        Igual que medirCalibracionADC() pero sirve solamente de test.
         """
 
         FILTER_1 = 10
         cant = 40
 
         puerto.show()
+        puerto.barraProgreso( 10, 6 )
+        
         selecPort = window_3.seleccionarPuerto()
         puerto.confPuerto(selecPort, "OPEN")        
         y = [ puerto.recibir(i, 'B') for i in range(0, cant) ]
         puerto.confPuerto(selecPort, "CLOSE")   
+
+        puerto.barraProgreso( 100, 6 )
         puerto.hide()
 
         print(y)
@@ -664,6 +715,8 @@ class Main(QMainWindow):
         cs['CONFIGURACION'][0][0][4] = disp
         cs['CONFIGURACION'][0][0][5] = prog
 
+        cs['CONFIGURACION'][0][0][6] = window_3.window_inputs.getListInputs()
+
     def pidoDatosCopiar(self):
         """
         """
@@ -682,7 +735,8 @@ class Main(QMainWindow):
 
         largo = len(valor[0])
         for i in range(0 , largo):
-            disp = valor[1][i] - 1 
+            # disp = valor[1][i] - 1 # Version 1.
+            disp = 0 # Version 2. 
             prog = valor[0][i] - 1 
 
             cs['SOLDADURA'][disp][prog][21] = valor[2][i]
@@ -702,7 +756,8 @@ class Main(QMainWindow):
         dato_3 = cs['MONITOR'].copy()
         dato_4 = cs['CALIBRACION'].copy()    
 
-        disp = self.caja_1.value() - 1
+        # disp = self.caja_1.value() - 1 # Valor 1.
+        disp = 0 # Valor .
         prog = self.caja_2.value() - 1
 
         #SOLDADURA
@@ -731,6 +786,9 @@ class Main(QMainWindow):
         # dato_1[disp][prog][21] = comportamiento       # Comportamiento.
         dato_1[disp][prog][22] = self.caja_119.value()  # Offset Intensidad.
         dato_1[disp][prog][23] = self.caja_120.value()  # Offset Fuerza.
+
+        disp = self.caja_1.value() - 1 # Valor 1.
+        prog = self.caja_2.value() - 1
 
         #SERVICIOS
         dato_2[disp][0][0] = self.caja_200.value()
@@ -781,10 +839,10 @@ class Main(QMainWindow):
         dato_4[disp][0][23] = self.caja_423.value()
         dato_4[disp][0][24] = self.caja_424.value()
 
-        cs['SOLDADURA'] = dato_1
-        cs['SERVICIOS'] = dato_2
-        cs['MONITOR'] = dato_3
-        cs['CALIBRACION'] = dato_4
+        cs['SOLDADURA'] = dato_1.copy()
+        cs['SERVICIOS'] = dato_2.copy()
+        cs['MONITOR'] = dato_3.copy()
+        cs['CALIBRACION'] = dato_4.copy()
 
         self.plotSold()
         self.plotCalib()
@@ -885,6 +943,9 @@ class Main(QMainWindow):
         self.bloqueoSignals(False)
         self.ocultar()
 
+        self.plotSold()
+        self.plotCalib()
+
     def entradasSalidasMonitor(self):
         """  
         """
@@ -907,10 +968,6 @@ class Main(QMainWindow):
 
         # Pido datos al CS.
         selecPort = window_3.seleccionarPuerto()
-
-        """ puerto.confPuerto(selecPort, "OPEN")
-        X = puerto.recibirDatosHistoricos(number)
-        puerto.confPuerto(selecPort, "CLOSE") """ 
         
         try:
             puerto.show()
@@ -918,6 +975,7 @@ class Main(QMainWindow):
             X = puerto.recibirDatosHistoricos(number)
             puerto.confPuerto(selecPort, "CLOSE")   
             puerto.hide()
+
         except:
             puerto.hide()
             mensaje = "No se pudo recuperar la informacion del [" + selecPort + "]."
@@ -1371,10 +1429,10 @@ class Main(QMainWindow):
         dato_4[ : , : , 23] = self.caja_423.value()
         dato_4[ : , : , 24] = self.caja_424.value()
 
-        cs['SOLDADURA'] = dato_1
-        cs['SERVICIOS'] = dato_2
-        cs['MONITOR'] = dato_3
-        cs['CALIBRACION'] = dato_4
+        cs['SOLDADURA'] = dato_1.copy()
+        cs['SERVICIOS'] = dato_2.copy()
+        cs['MONITOR'] = dato_3.copy()
+        cs['CALIBRACION'] = dato_4.copy()
 
     def bloqueoSignals(self, estado):
         """
@@ -1466,6 +1524,8 @@ class Main(QMainWindow):
         estado = False (disabled)
         estado = True  (enabled)
         """
+
+        self.bloqueoSignals(True)
         
         #dispositivo = self.caja_1.value()
         programa = self.caja_2.value()
@@ -1477,7 +1537,7 @@ class Main(QMainWindow):
         else:
             aux = self.caja_206.value()
             self.caja_206.setValue(aux)
-            self.caja_206.setEnabled(True)
+            self.caja_206.setEnabled(True)        
 
         largo = len(cs["DISP_LISTA"])
         for i in range(0, largo):  
@@ -1491,6 +1551,8 @@ class Main(QMainWindow):
 
         self.caja_1.setEnabled(estado)
         self.frame_100.setEnabled(estado)
+
+        self.bloqueoSignals(False)
 
     def ocultar(self):
         """
@@ -1621,7 +1683,7 @@ class Main(QMainWindow):
             cs['ETIQUETA'] = filename.item().get("ETIQUETA")
             
             window_3.cargoConfiguracion(cs)
-            window_5.cargoTabla(cs)            
+            window_5.cargoTabla(cs)        
             self.seteoCajas()
 
         except:
@@ -1787,7 +1849,8 @@ class Main(QMainWindow):
         """
         """
 
-        disp = self.caja_1.value() - 1
+        #disp = self.caja_1.value() - 1 # Version 1.
+        disp = 0
         prog = self.caja_2.value() - 1
 
         #self.graphWidget_1.setXRange(0, 50)
@@ -2029,7 +2092,7 @@ if __name__ == '__main__':
     window_3 = Configuracion()
     window_4 = Copiar()
     window_5 = Tabla()
-    window_6 = ListaErrores()
+    window_6 = ListaErrores() 
 
     puerto = PuertoSerie()
 
